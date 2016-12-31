@@ -54,9 +54,18 @@ namespace VSEmbed {
 
 		///<summary>Gets the installation directory for the specified version.</summary>
 		private static string GetInstallationDirectory(Version version) {
-			return SkuKeyNames.Select(sku =>
-				Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\" + sku + @"\" + version.ToString(2), "InstallDir", null) as string
-			).FirstOrDefault(p => p != null);
+			// This information is no longer in theregistry, so we're trying to match
+			// "C:\Program Files(x86)\Microsoft Visual Studio\*\*\Common7\IDE"
+			foreach (var installationDirectory in Directory.GetDirectories(@"C:\Program Files (x86)\Microsoft Visual Studio\"))
+			{
+				var subdirs = Directory.GetDirectories(installationDirectory);
+				var match = subdirs.FirstOrDefault(n => Directory.Exists(Path.Combine(n, @"Common7\IDE")));
+				if (match != null)
+				{
+					return Path.Combine(match, @"Common7\IDE");
+				}
+			}
+			return null;
 		}
 
 		///<summary>Indicates whether the code is running within the VS designer.</summary>
@@ -112,7 +121,11 @@ namespace VSEmbed {
 				if (name.Name.EndsWith(".resources"))
 					return LoadResourceDll(name, InstallationDirectory, name.CultureInfo)
 						?? LoadResourceDll(name, InstallationDirectory, name.CultureInfo.Parent);
-				return Assembly.LoadFile(Path.Combine(InstallationDirectory, name.Name + ".dll"));
+				if (File.Exists(Path.Combine(InstallationDirectory, name.Name + ".dll")))
+				{
+					return Assembly.LoadFile(Path.Combine(InstallationDirectory, name.Name + ".dll"));
+				}
+				return Assembly.LoadFile(Path.Combine(InstallationDirectory, "PrivateAssemblies", name.Name + ".dll"));
 			}
 		}
 		static Assembly LoadResourceDll(AssemblyName name, string baseDirectory, CultureInfo culture) {
