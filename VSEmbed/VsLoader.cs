@@ -125,7 +125,16 @@ namespace VSEmbed {
 				{
 					return Assembly.LoadFile(Path.Combine(InstallationDirectory, name.Name + ".dll"));
 				}
-				return Assembly.LoadFile(Path.Combine(InstallationDirectory, "PrivateAssemblies", name.Name + ".dll"));
+				if (File.Exists(Path.Combine(InstallationDirectory, @"CommonExtensions\Microsoft\Editor", name.Name + ".dll")))
+				{
+					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"CommonExtensions\Microsoft\Editor", name.Name + ".dll"));
+				}
+				if (File.Exists(Path.Combine(InstallationDirectory, @"PrivateAssemblies", name.Name + ".dll")))
+				{
+					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"PrivateAssemblies", name.Name + ".dll"));
+				}
+				Debug.Fail("Assembly Resolve failed for " + name.Name);
+				throw new Exception("Assembly Resolve failed for " + name.Name);
 			}
 		}
 		static Assembly LoadResourceDll(AssemblyName name, string baseDirectory, CultureInfo culture) {
