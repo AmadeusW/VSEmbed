@@ -56,7 +56,7 @@ namespace VSEmbed.Services {
 		}
 		public string Version { get { throw new NotImplementedException(); } }
 		public WindowConfigurations WindowConfigurations { get { throw new NotImplementedException(); } }
-		public Windows Windows { get { throw new NotImplementedException(); } }
+		public EnvDTE.Windows Windows { get { throw new NotImplementedException(); } }
 		public void ExecuteCommand(string CommandName, string CommandArgs = "") { throw new NotImplementedException(); }
 		public dynamic GetObject(string Name) { throw new NotImplementedException(); }
 		public bool get_IsOpenFile(string ViewKind, string FileName) { throw new NotImplementedException(); }
