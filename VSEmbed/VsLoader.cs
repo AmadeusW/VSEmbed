@@ -125,10 +125,6 @@ namespace VSEmbed {
 				{
 					return Assembly.LoadFile(Path.Combine(InstallationDirectory, name.Name + ".dll"));
 				}
-				if (File.Exists(Path.Combine(InstallationDirectory, @"CommonExtensions\Microsoft\Editor", name.Name + ".dll")))
-				{
-					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"CommonExtensions\Microsoft\Editor", name.Name + ".dll"));
-				}
 				if (File.Exists(Path.Combine(InstallationDirectory, @"PrivateAssemblies", name.Name + ".dll")))
 				{
 					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"PrivateAssemblies", name.Name + ".dll"));
@@ -136,6 +132,11 @@ namespace VSEmbed {
 				if (File.Exists(Path.Combine(InstallationDirectory, @"PublicAssemblies", name.Name + ".dll")))
 				{
 					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"PublicAssemblies", name.Name + ".dll"));
+				}
+				var matches = Directory.GetFiles(Path.Combine(InstallationDirectory, @"CommonExtensions"), name.Name + ".dll", SearchOption.AllDirectories);
+				if (matches.Any())
+				{
+					return Assembly.LoadFile(matches.First());
 				}
 				Debug.Fail("Assembly Resolve failed for " + name.Name);
 				throw new Exception("Assembly Resolve failed for " + name.Name);
