@@ -133,6 +133,10 @@ namespace VSEmbed {
 				{
 					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"PrivateAssemblies", name.Name + ".dll"));
 				}
+				if (File.Exists(Path.Combine(InstallationDirectory, @"PublicAssemblies", name.Name + ".dll")))
+				{
+					return Assembly.LoadFile(Path.Combine(InstallationDirectory, @"PublicAssemblies", name.Name + ".dll"));
+				}
 				Debug.Fail("Assembly Resolve failed for " + name.Name);
 				throw new Exception("Assembly Resolve failed for " + name.Name);
 			}
