@@ -17,7 +17,7 @@
 	<vsc:CustomChromeWindow.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/Microsoft.VisualStudio.Shell.UI.Internal;component/Themes/Generic.xaml" />
+				<ResourceDictionary Source="/Microsoft.VisualStudio.Shell.UI.Internal;component/themes/generic.xaml" />
 				<ResourceDictionary Source="/Microsoft.VisualStudio.Platform.WindowManagement;component/Themes/Resources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 
