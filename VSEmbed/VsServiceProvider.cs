@@ -45,7 +45,7 @@ namespace VSEmbed {
 			// The designer pre-loads our referenced assemblies, so we can't
 			// use any other version.
 			if (VsLoader.VsVersion == null)
-				VsLoader.Load(new Version(11, 0, 0, 0));
+				VsLoader.Load(new Version(15, 0, 0, 0));
 
 			var esm = ExternalSettingsManager.CreateForApplication(Path.Combine(VsLoader.InstallationDirectory, "devenv.exe"));
 			var sp = new VsServiceProvider
