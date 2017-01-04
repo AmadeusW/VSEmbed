@@ -98,7 +98,7 @@ namespace VSEmbed {
 			// which we cannot reference directly (to avoid breaking
 			// older versions). Therefore, I set the global property
 			// for every available version using Reflection instead.
-			foreach (var vsVersion in VsLoader.FindAllVersions().Where(v => v.Major >= 10)) {
+			foreach (var vsVersion in VsLoader.FindAllVersions().Where(v => v.Major >= 14)) {
 				var type = Type.GetType("Microsoft.VisualStudio.Shell.ServiceProvider, Microsoft.VisualStudio.Shell." + vsVersion.ToString(2));
 				if (type == null)
 					continue;
@@ -119,6 +119,9 @@ namespace VSEmbed {
 			// used.
 			// Used by JoinableTaskFactory
 			AddService(typeof(SVsTaskSchedulerService), Activator.CreateInstance(typeof(VsMenu).Assembly.GetType("Microsoft.VisualStudio.Services.VsTaskSchedulerService")));
+		// Must be JITted after VsLoader.Load so we can load ComponentModelHost
+		void BuildContainer() { 
+		}
 		}
 
 		///<summary>Gets the MEF IComponentModel installed in this ServiceProvider, if any.</summary>

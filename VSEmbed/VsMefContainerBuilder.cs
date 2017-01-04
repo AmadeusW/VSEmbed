@@ -245,10 +245,9 @@ namespace VSEmbed {
 		/// Creates a MEF container from this builder instance, and installs it into the global ServiceProvider.
 		/// Editor factories will not work before this method is called.
 		///</summary>
-		public IComponentModel Build() {
+		public void Build() {
 			var container = BuildCore();
 			VsServiceProvider.Instance.SetMefContainer(container);
-			return container;
 		}
 
 		///<summary>Builds the described MEF container and wraps it in a Visual Studio <see cref="IComponentModel"/> implementation.</summary>
