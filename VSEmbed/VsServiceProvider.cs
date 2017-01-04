@@ -98,7 +98,7 @@ namespace VSEmbed {
 			// which we cannot reference directly (to avoid breaking
 			// older versions). Therefore, I set the global property
 			// for every available version using Reflection instead.
-			foreach (var vsVersion in VsLoader.FindAllVersions().Where(v => v.Major >= 14)) {
+			foreach (var vsVersion in VsLoader.FindAllVersions().Where(v => v.Major >= 10)) {
 				var type = Type.GetType("Microsoft.VisualStudio.Shell.ServiceProvider, Microsoft.VisualStudio.Shell." + vsVersion.ToString(2));
 				if (type == null)
 					continue;
