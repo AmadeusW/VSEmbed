@@ -138,6 +138,11 @@ namespace VSEmbed {
 				{
 					return Assembly.LoadFile(matches.First());
 				}
+				var matches2 = Directory.GetFiles(Path.Combine(InstallationDirectory, @"en"), name.Name + ".dll", SearchOption.AllDirectories);
+				if (matches2.Any())
+				{
+					return Assembly.LoadFile(matches2.First());
+				}
 				Debug.Fail("Assembly Resolve failed for " + name.Name);
 				throw new Exception("Assembly Resolve failed for " + name.Name);
 			}
