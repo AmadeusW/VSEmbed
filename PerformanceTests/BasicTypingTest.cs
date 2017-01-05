@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,13 +7,21 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using VSEmbed;
+using VSEmbed.DemoApp;
 
 namespace PerformanceTests
 {
-	class Program
+	public class BasicTypingTest
 	{
+		private MainWindow _window;
+		static BasicTypingTest()
+		{
+			VsLoader.Load(new Version(14, 0, 0, 0));
+			VsServiceProvider.Initialize();
+			VsMefContainerBuilder.CreateDefault().Build();
+		}
+
 		private static void initializeRoslynForegroundThreadDataObject()
 		{
 			var currentThread = Thread.CurrentThread;
@@ -28,38 +37,25 @@ namespace PerformanceTests
 			m_currentForegroundThreadData.SetValue(null, result);
 		}
 
-		static void Main(string[] args)
+		[Setup]
+		public void Setup()
 		{
-			var thread = new Thread(() =>
-			{
-				VsLoader.Load(new Version(14, 0, 0, 0));
-				VsServiceProvider.Initialize();
-				VsMefContainerBuilder.CreateDefault().Build();
-
-				//Can we please not have to do this?
-				initializeRoslynForegroundThreadDataObject();
-				var window = new VSEmbed.DemoApp.MainWindow();
-				new WpfApplication(window).Run();
-			});
-
-			thread.SetApartmentState(ApartmentState.STA);
-			thread.Start();
-			thread.Join();
+			//Can we please not have to do this?
+			initializeRoslynForegroundThreadDataObject();
+			_window = new MainWindow();
 		}
-		private class WpfApplication : Application
+
+		[Cleanup]
+		public void Cleanup()
 		{
-			private readonly VSEmbed.DemoApp.MainWindow _mainWindow;
+			_window.Close();
+			_window = null;
+		}
 
-			public WpfApplication(VSEmbed.DemoApp.MainWindow mainWindow)
-			{
-				_mainWindow = mainWindow;
-			}
+		[Benchmark]
+		public void BasicTypingPerf()
+		{
 
-			protected override void OnStartup(StartupEventArgs e)
-			{
-				_mainWindow.Show();
-				_mainWindow.SendKeyInput("namespace");
-			}
 		}
 	}
 }
