@@ -40,5 +40,10 @@ namespace VSEmbed.DemoApp
 		{
 			System.Windows.Input.Test.SendKeys.Send(_wpfTextView, key, modifiers);
 		}
+
+		public void SetContentType(string contentType)
+		{
+			this.mainTextViewHost.ContentType = contentType;
+		}
 	}
 }

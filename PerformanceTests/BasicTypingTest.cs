@@ -37,6 +37,10 @@ namespace PerformanceTests
 			m_currentForegroundThreadData.SetValue(null, result);
 		}
 
+		public enum ContentType { text, CSharp}
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
 		[Setup]
 		public void Setup()
 		{
@@ -44,6 +48,15 @@ namespace PerformanceTests
 			initializeRoslynForegroundThreadDataObject();
 			_window = new MainWindow();
 			_window.Show();
+			if(CurrentContentType == ContentType.text)
+			{
+				_window.SetContentType(nameof(ContentType.text));
+			}
+			else if(CurrentContentType == ContentType.CSharp)
+			{
+				_window.SetContentType(nameof(ContentType.CSharp));
+			}
+
 		}
 
 		[Cleanup]
