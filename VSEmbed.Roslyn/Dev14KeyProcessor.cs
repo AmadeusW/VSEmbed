@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 using VSEmbed.Editor;
 using VSEmbed.Exports;
 
-namespace VSEmbed.Roslyn {
+namespace VSEmbed.Roslyn
+{
 	// This class has nothing to do with Roslyn, but it consumes APIs new to Dev14,
 	// so I can't put it elsewhere.  And these features are only provided by Roslyn
 	// anyway, so it doesn't matter.  This is based on IntellisenseCommandFilter in

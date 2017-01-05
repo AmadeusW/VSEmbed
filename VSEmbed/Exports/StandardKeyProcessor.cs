@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -11,7 +8,8 @@ using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 using VSEmbed.Editor;
 
-namespace VSEmbed.Exports {
+namespace VSEmbed.Exports
+{
 	// Loosely based on WebMatrix's DefaultKeyProcessor
 	///<summary>A base class for a KeyProcessor that handles shortcut keys.</summary>
 	///<remarks>Derived classes should call Add*Command() in their constructors to build the key map.</remarks>

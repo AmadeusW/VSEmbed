@@ -4,14 +4,13 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Text.Projection;
 using Microsoft.VisualStudio.Utilities;
 
-namespace VSEmbed.Exports {
+namespace VSEmbed.Exports
+{
 	/// <summary>
 	/// This class is intended to be a very simple ITextUndoHistoryRegistry implementation for hosts that
 	/// don't have a built-in undo mechanism.

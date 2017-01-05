@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Media;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Composition;
 
 using MEFv1 = System.ComponentModel.Composition;
 using MEFv3 = Microsoft.VisualStudio.Composition;
 
-namespace VSEmbed {
+namespace VSEmbed
+{
 	///<summary>Creates the MEF composition container used by the editor services.  This type is immutable</summary>
 	/// <remarks>Stolen, with much love and gratitude, from @JaredPar's EditorUtils.</remarks>
 	public abstract class VsMefContainerBuilder {

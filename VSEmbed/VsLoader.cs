@@ -6,13 +6,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 
-namespace VSEmbed {
+namespace VSEmbed
+{
 	///<summary>Sets up assembly redirection to load Visual Studio assemblies.</summary>
 	///<remarks>This class must be initialized before anything else is JITted.</remarks>
 	public static class VsLoader {

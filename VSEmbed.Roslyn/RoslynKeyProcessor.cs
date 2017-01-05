@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -17,7 +14,8 @@ using Microsoft.VisualStudio.Utilities;
 using VSEmbed.Editor;
 
 
-namespace VSEmbed.Roslyn {
+namespace VSEmbed.Roslyn
+{
 
 	// The Roslyn commanding system is built around ICommandHandlerService, which intercepts and
 	// handles every command.  Unfortunately, the entire system is internal.  I steal the entry-
