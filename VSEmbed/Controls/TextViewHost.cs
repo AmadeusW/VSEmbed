@@ -15,9 +15,7 @@ namespace VSEmbed.Controls
 		public IWpfTextView TextView { get; private set; }
 		///<summary>Creates a <see cref="TextViewHost"/>.  <see cref="VsMefContainerBuilder"/> must be set up before creating this.</summary>
 		public TextViewHost() {
-			if (VsServiceProvider.Instance.ComponentModel == null) {
-				if (VsLoader.IsDesignMode)
-					return;
+			if (VsServiceProvider.Instance?.ComponentModel == null) {
 				throw new InvalidOperationException("To use TextViewHost, you must first install a MEF container into the ServiceProvider by calling VsMefContainerBuilder.Initialize().");
 			}
 			var bufferFactory = VsServiceProvider.Instance.ComponentModel.GetService<ITextBufferFactoryService>();

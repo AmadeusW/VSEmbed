@@ -58,11 +58,6 @@ namespace VSEmbed
 			).FirstOrDefault(p => p != null);
 		}
 
-		///<summary>Indicates whether the code is running within the VS designer.</summary>
-		public static bool IsDesignMode {
-			get { return (bool)DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue; }
-		}
-
 
 		///<summary>Initializes the assembly loader with the latest installed version of Visual Studio.</summary>
 		public static void LoadLatest() {
