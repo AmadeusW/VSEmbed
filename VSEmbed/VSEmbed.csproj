@@ -154,7 +154,6 @@
     <Compile Include="VsLoader.cs" />
     <Compile Include="VsMefContainerBuilder.cs" />
     <Compile Include="VsServiceProvider.cs" />
-    <Compile Include="VsThemeDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\VsResizeGrip.xaml">
