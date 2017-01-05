@@ -108,6 +108,10 @@
       <Project>{93bbeb44-6849-423e-a5c1-440558661b5c}</Project>
       <Name>VSEmbed</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfSendKeys\WpfSendKeys.csproj">
+      <Project>{e9fcd3ae-dc02-478b-854a-b287aa96e155}</Project>
+      <Name>WpfSendKeys</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

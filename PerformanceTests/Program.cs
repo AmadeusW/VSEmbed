@@ -13,7 +13,6 @@ namespace PerformanceTests
 {
 	class Program
 	{
-
 		private static void initializeRoslynForegroundThreadDataObject()
 		{
 			var currentThread = Thread.CurrentThread;
@@ -39,9 +38,7 @@ namespace PerformanceTests
 
 				//Can we please not have to do this?
 				initializeRoslynForegroundThreadDataObject();
-
 				var window = new VSEmbed.DemoApp.MainWindow();
-
 				new WpfApplication(window).Run();
 			});
 
@@ -51,9 +48,9 @@ namespace PerformanceTests
 		}
 		private class WpfApplication : Application
 		{
-			private readonly Window _mainWindow;
+			private readonly VSEmbed.DemoApp.MainWindow _mainWindow;
 
-			public WpfApplication(Window mainWindow)
+			public WpfApplication(VSEmbed.DemoApp.MainWindow mainWindow)
 			{
 				_mainWindow = mainWindow;
 			}
@@ -61,10 +58,8 @@ namespace PerformanceTests
 			protected override void OnStartup(StartupEventArgs e)
 			{
 				_mainWindow.Show();
+				_mainWindow.SendKeyInput();
 			}
 		}
-
 	}
-
-
 }
