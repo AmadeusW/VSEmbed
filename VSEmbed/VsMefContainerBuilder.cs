@@ -9,12 +9,6 @@ using System.Windows;
 using System.Windows.Media;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Composition;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Text.Storage;
-using Microsoft.VisualStudio.Utilities;
 
 using MEFv1 = System.ComponentModel.Composition;
 using MEFv3 = Microsoft.VisualStudio.Composition;
