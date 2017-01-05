@@ -153,7 +153,6 @@
     <Compile Include="TextViewExtensions.cs" />
     <Compile Include="VsLoader.cs" />
     <Compile Include="VsMefContainerBuilder.cs" />
-    <Compile Include="VsResourceKeys.cs" />
     <Compile Include="VsServiceProvider.cs" />
     <Compile Include="VsThemeDictionary.cs" />
   </ItemGroup>
