@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenchmarkDotNet.Running;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,23 +29,30 @@ namespace PerformanceTests
 			m_currentForegroundThreadData.SetValue(null, result);
 		}
 
+		[STAThread]
 		static void Main(string[] args)
 		{
-			var thread = new Thread(() =>
-			{
-				VsLoader.Load(new Version(14, 0, 0, 0));
-				VsServiceProvider.Initialize();
-				VsMefContainerBuilder.CreateDefault().Build();
+			//var x = new BasicTypingTest();
+			//x.Setup();
+			//x.BasicTypingPerf();
 
-				//Can we please not have to do this?
-				initializeRoslynForegroundThreadDataObject();
-				var window = new VSEmbed.DemoApp.MainWindow();
-				new WpfApplication(window).Run();
-			});
+			var summary = BenchmarkRunner.Run<BasicTypingTest>();
 
-			thread.SetApartmentState(ApartmentState.STA);
-			thread.Start();
-			thread.Join();
+			//var thread = new Thread(() =>
+			//{
+			//	VsLoader.Load(new Version(14, 0, 0, 0));
+			//	VsServiceProvider.Initialize();
+			//	VsMefContainerBuilder.CreateDefault().Build();
+
+			//	//Can we please not have to do this?
+			//	initializeRoslynForegroundThreadDataObject();
+			//	var window = new VSEmbed.DemoApp.MainWindow();
+			//	new WpfApplication(window).Run();
+			//});
+
+			//thread.SetApartmentState(ApartmentState.STA);
+			//thread.Start();
+			//thread.Join();
 		}
 		private class WpfApplication : Application
 		{
@@ -58,7 +66,7 @@ namespace PerformanceTests
 			protected override void OnStartup(StartupEventArgs e)
 			{
 				_mainWindow.Show();
-				_mainWindow.SendKeyInput("namespace");
+				//_mainWindow.SendKeyInput("{");
 			}
 		}
 	}

@@ -43,6 +43,7 @@ namespace PerformanceTests
 			//Can we please not have to do this?
 			initializeRoslynForegroundThreadDataObject();
 			_window = new MainWindow();
+			_window.Show();
 		}
 
 		[Cleanup]
@@ -52,10 +53,19 @@ namespace PerformanceTests
 			_window = null;
 		}
 
-		[Benchmark]
+		[Benchmark, STAThread]
 		public void BasicTypingPerf()
 		{
-
+			_window.SendKeystrokes("namespace");
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
+			_window.SendKey(System.Windows.Input.Key.Back);
 		}
 	}
 }

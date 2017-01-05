@@ -31,9 +31,14 @@ namespace VSEmbed.DemoApp
 			_wpfTextView = grid.Children[0];
 		}
 
-		public void SendKeyInput(string input)
+		public void SendKeystrokes(string input)
 		{
 			System.Windows.Input.Test.SendKeys.Send(_wpfTextView, input);
+		}
+
+		public void SendKey(Key key, ModifierKeys modifiers = ModifierKeys.None)
+		{
+			System.Windows.Input.Test.SendKeys.Send(_wpfTextView, key, modifiers);
 		}
 	}
 }
