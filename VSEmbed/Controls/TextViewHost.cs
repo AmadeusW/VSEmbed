@@ -66,6 +66,7 @@ namespace VSEmbed.Controls {
 			 ?? contentTypeRegistry.GetContentType("text");
 
 			instance.TextView.TextBuffer.ChangeContentType(contentType, null);
+			var available = AvailableContentTypes;
 		}
 
 		///<summary>Gets or sets the content of the embedded <see cref="ITextBuffer"/>.</summary>

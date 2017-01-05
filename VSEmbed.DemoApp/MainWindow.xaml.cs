@@ -19,9 +19,10 @@ namespace VSEmbed.DemoApp {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : CustomChromeWindow {
+	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
+			Editor.ContentType = "CSharp";
 			ViewManager.Instance.Initialize(new ContentControl());
 		}
 	}

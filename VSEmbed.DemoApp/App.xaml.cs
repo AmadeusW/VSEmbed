@@ -13,6 +13,9 @@ namespace VSEmbed.DemoApp {
 	/// </summary>
 	public partial class App : Application {
 		public App() {
+			var watchMe = typeof(Roslyn.RoslynSetup);
+			var ass = watchMe.Assembly;
+			System.Reflection.Assembly.Load(ass.FullName);
 			VsLoader.Load(new Version(15, 0, 0, 0));
 			VsServiceProvider.Initialize();
 			BuildContainer();
