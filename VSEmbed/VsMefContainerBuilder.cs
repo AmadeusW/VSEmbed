@@ -23,6 +23,10 @@ namespace VSEmbed {
 	///<summary>Creates the MEF composition container used by the editor services.  This type is immutable</summary>
 	/// <remarks>Stolen, with much love and gratitude, from @JaredPar's EditorUtils.</remarks>
 	public abstract class VsMefContainerBuilder {
+		// I need to specify a full name to load from the GAC.
+		// The version is added by my AssemblyResolve handler.
+		const string VsFullNameSuffix = ", Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
+
 		#region Export Exclusion
 		static readonly HashSet<string> excludedTypes = new HashSet<string> {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
@@ -47,18 +51,36 @@ namespace VSEmbed {
 		};
 		///<summary>Prevents an exported type from being included in the created MEF container.</summary>
 		///<remarks>Call this method if an exported type doesn't work outside Visual Studio.</remarks>
-		public static void ExcludeExport(string fullTypeName) { excludedTypes.Add(fullTypeName); }
+		public static void ExcludeExport(string fullTypeName)
+		{
+			excludedTypes.Add(fullTypeName);
+		}
 		#endregion
 
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public virtual VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies) { return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies); }
+		public virtual VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
+		{
+			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
+		}
+
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public virtual VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies) {
-			var x = assemblies.Select(n => n.FullName).OrderBy(m => m).ToList();
+		public virtual VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies)
+		{
 			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
 		}
 		///<summary>Creates a new builder, including a catalog with the specified types.</summary>
 		public abstract VsMefContainerBuilder WithCatalog(IEnumerable<Type> types);
+
+		protected abstract IComponentModel BuildCore();
+		
+		///<summary>
+		/// Creates a MEF container from this builder instance, and installs it into the global ServiceProvider.
+		/// Editor factories will not work before this method is called.
+		///</summary>
+		public void Build() {
+			var container = BuildCore();
+			VsServiceProvider.Instance.SetMefContainer(container);
+		}
 
 		#region Catalog Setup
 		private static readonly string[] EditorComponents = {
@@ -122,17 +144,12 @@ namespace VSEmbed {
 
 		}
 
-		// I need to specify a full name to load from the GAC.
-		// The version is added by my AssemblyResolve handler.
-		const string VsFullNameSuffix = ", Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
-
 		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
 		public VsMefContainerBuilder WithEditorCatalogs() {
 			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
 				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
 		}
 		#endregion
-
 		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
 		public static VsMefContainerBuilder CreateDefault() {
 			return Create().WithEditorCatalogs().WithRoslynCatalogs();
@@ -143,6 +160,7 @@ namespace VSEmbed {
 				return V3.Create();
 		}
 
+		///<summary>Builds the described MEF container and wraps it in a Visual Studio <see cref="IComponentModel"/> implementation.</summary>
 		class V3 : VsMefContainerBuilder {
 			internal static new VsMefContainerBuilder Create() {
 				return new V3(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
@@ -177,6 +195,7 @@ namespace VSEmbed {
 					.CreateExportProvider();
 				return new ComponentModel(exportProvider);
 			}
+
 			class ComponentModel : IComponentModel {
 				public readonly MEFv3.ExportProvider ExportProvider;
 
@@ -200,17 +219,5 @@ namespace VSEmbed {
 				public T GetService<T>() where T : class { return ExportProvider.GetExportedValue<T>(); }
 			}
 		}
-
-		///<summary>
-		/// Creates a MEF container from this builder instance, and installs it into the global ServiceProvider.
-		/// Editor factories will not work before this method is called.
-		///</summary>
-		public void Build() {
-			var container = BuildCore();
-			VsServiceProvider.Instance.SetMefContainer(container);
-		}
-
-		///<summary>Builds the described MEF container and wraps it in a Visual Studio <see cref="IComponentModel"/> implementation.</summary>
-		protected abstract IComponentModel BuildCore();
 	}
 }
