@@ -54,6 +54,7 @@ namespace VSEmbed {
 		public virtual VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies) { return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies); }
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
 		public virtual VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies) {
+			var x = assemblies.Select(n => n.FullName).OrderBy(m => m).ToList();
 			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
 		}
 		///<summary>Creates a new builder, including a catalog with the specified types.</summary>
@@ -139,47 +140,7 @@ namespace VSEmbed {
 
 		///<summary>Creates an empty builder with no catalogs.</summary>
 		public static VsMefContainerBuilder Create() {
-			if (Type.GetType("Microsoft.VisualStudio.Composition.CompositionConfiguration, Microsoft.VisualStudio.Composition") != null)
 				return V3.Create();
-			else
-				return V1.Create();
-		}
-
-		class V1 : VsMefContainerBuilder {
-			readonly ImmutableList<MEFv1.Primitives.ComposablePartCatalog> catalogs;
-
-			public V1(ImmutableList<MEFv1.Primitives.ComposablePartCatalog> catalogs) {
-				this.catalogs = catalogs;
-			}
-
-			internal new static VsMefContainerBuilder Create() {
-				return new V1(ImmutableList<MEFv1.Primitives.ComposablePartCatalog>.Empty);
-			}
-
-			public override VsMefContainerBuilder WithCatalog(IEnumerable<Type> types) {
-				return new V1(catalogs.Add(new MEFv1.Hosting.TypeCatalog(types)));
-			}
-
-			protected override IComponentModel BuildCore() {
-				return new ComponentModel(new MEFv1.Hosting.CompositionContainer(new MEFv1.Hosting.AggregateCatalog(catalogs)));
-			}
-
-			class ComponentModel : IComponentModel {
-				public ComponentModel(MEFv1.Hosting.CompositionContainer container) {
-					DefaultCompositionService = container;
-					DefaultExportProvider = container;
-				}
-
-
-				public MEFv1.ICompositionService DefaultCompositionService { get; private set; }
-				public MEFv1.Hosting.ExportProvider DefaultExportProvider { get; private set; }
-
-				public MEFv1.Primitives.ComposablePartCatalog DefaultCatalog { get { throw new NotSupportedException(); } }
-				public MEFv1.Primitives.ComposablePartCatalog GetCatalog(string catalogName) { throw new NotSupportedException(); }
-
-				public IEnumerable<T> GetExtensions<T>() where T : class { return DefaultExportProvider.GetExportedValues<T>(); }
-				public T GetService<T>() where T : class { return DefaultExportProvider.GetExportedValue<T>(); }
-			}
 		}
 
 		class V3 : VsMefContainerBuilder {
@@ -192,7 +153,6 @@ namespace VSEmbed {
 			private V3(MEFv3.ComposableCatalog catalog) {
 				this.catalog = catalog;
 			}
-
 
 			static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
 				new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
@@ -252,6 +212,5 @@ namespace VSEmbed {
 
 		///<summary>Builds the described MEF container and wraps it in a Visual Studio <see cref="IComponentModel"/> implementation.</summary>
 		protected abstract IComponentModel BuildCore();
-
 	}
 }
