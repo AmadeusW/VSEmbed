@@ -29,9 +29,6 @@ namespace VSEmbed
 			// JaredPar: Core editor components
 			"Microsoft.VisualStudio.Platform.VSEditor",
 
-			// JaredPar: Not entirely sure why this is suddenly needed
-			"Microsoft.VisualStudio.Text.Internal",
-
 			// JaredPar: Must include this because several editor options are actually stored as exported information 
 			// on this DLL.  Including most importantly, the tabsize information
 			"Microsoft.VisualStudio.Text.Logic",
