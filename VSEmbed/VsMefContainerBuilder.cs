@@ -31,13 +31,6 @@ namespace VSEmbed
 			this.catalog = catalog;
 		}
 
-		internal static VsMefContainerBuilder Create()
-		{
-			return new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
-				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
-				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration")); ;
-		}
-
 		#region Export Exclusion
 		static readonly HashSet<string> excludedTypes = new HashSet<string> {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
@@ -181,7 +174,11 @@ namespace VSEmbed
 		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
 		public static VsMefContainerBuilder CreateDefault()
 		{
-			return Create().WithEditorCatalogs().WithRoslynCatalogs();
+			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
+				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
+				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration"));
+			
+			return containerBuilder.WithEditorCatalogs().WithRoslynCatalogs();
 		}
 
 		class ComponentModel : IComponentModel
