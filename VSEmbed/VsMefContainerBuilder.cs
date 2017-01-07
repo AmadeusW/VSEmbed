@@ -19,13 +19,34 @@ using Microsoft.VisualStudio.Utilities;
 using MEFv1 = System.ComponentModel.Composition;
 using MEFv3 = Microsoft.VisualStudio.Composition;
 
-namespace VSEmbed {
+namespace VSEmbed
+{
 	///<summary>Creates the MEF composition container used by the editor services.  This type is immutable</summary>
 	/// <remarks>Stolen, with much love and gratitude, from @JaredPar's EditorUtils.</remarks>
-	public abstract class VsMefContainerBuilder {
+	public class VsMefContainerBuilder
+	{
 		// I need to specify a full name to load from the GAC.
 		// The version is added by my AssemblyResolve handler.
 		const string VsFullNameSuffix = ", Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
+
+		readonly MEFv3.ComposableCatalog catalog;
+
+		static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
+			new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
+			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance)
+		);
+
+		private VsMefContainerBuilder(MEFv3.ComposableCatalog catalog)
+		{
+			this.catalog = catalog;
+		}
+
+		internal static VsMefContainerBuilder Create()
+		{
+			return new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
+				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
+				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration")); ;
+		}
 
 		#region Export Exclusion
 		static readonly HashSet<string> excludedTypes = new HashSet<string> {
@@ -58,27 +79,42 @@ namespace VSEmbed {
 		#endregion
 
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public virtual VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
+		public VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
 		{
 			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
 		}
 
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public virtual VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies)
+		public VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies)
 		{
 			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
 		}
-		///<summary>Creates a new builder, including a catalog with the specified types.</summary>
-		public abstract VsMefContainerBuilder WithCatalog(IEnumerable<Type> types);
 
-		protected abstract IComponentModel BuildCore();
-		
+		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)
+		{
+			// Consumers are expected to build their MEF catalogs before setting
+			// up the UI thread, so this should not create async deadlocks under
+			// normal usage.
+			return new VsMefContainerBuilder(catalog.AddParts(
+				partDiscovery.CreatePartsAsync(types)
+					.GetAwaiter()
+					.GetResult()
+					.ThrowOnErrors()
+			));
+		}
+
 		///<summary>
 		/// Creates a MEF container from this builder instance, and installs it into the global ServiceProvider.
 		/// Editor factories will not work before this method is called.
 		///</summary>
-		public void Build() {
-			var container = BuildCore();
+		public void Build()
+		{
+			var exportProvider = MEFv3.RuntimeComposition
+				.CreateRuntimeComposition(MEFv3.CompositionConfiguration.Create(catalog).ThrowOnErrors())
+				.CreateExportProviderFactory()
+				.CreateExportProvider();
+
+			var container = new ComponentModel(exportProvider);
 			VsServiceProvider.Instance.SetMefContainer(container);
 		}
 
@@ -108,7 +144,8 @@ namespace VSEmbed {
 		};
 
 		///<summary>Creates a new builder, including catalogs for the Roslyn language services.</summary>
-		public VsMefContainerBuilder WithRoslynCatalogs() {
+		public VsMefContainerBuilder WithRoslynCatalogs()
+		{
 			if (VsLoader.RoslynAssemblyPath == null)
 				return this;
 
@@ -145,79 +182,42 @@ namespace VSEmbed {
 		}
 
 		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
-		public VsMefContainerBuilder WithEditorCatalogs() {
+		public VsMefContainerBuilder WithEditorCatalogs()
+		{
 			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
 				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
 		}
 		#endregion
 		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
-		public static VsMefContainerBuilder CreateDefault() {
+		public static VsMefContainerBuilder CreateDefault()
+		{
 			return Create().WithEditorCatalogs().WithRoslynCatalogs();
 		}
 
-		///<summary>Creates an empty builder with no catalogs.</summary>
-		public static VsMefContainerBuilder Create() {
-				return V3.Create();
-		}
+		class ComponentModel : IComponentModel
+		{
+			public readonly MEFv3.ExportProvider ExportProvider;
 
-		///<summary>Builds the described MEF container and wraps it in a Visual Studio <see cref="IComponentModel"/> implementation.</summary>
-		class V3 : VsMefContainerBuilder {
-			internal static new VsMefContainerBuilder Create() {
-				return new V3(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
-					// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
-					.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration")); ;
-			}
-			readonly MEFv3.ComposableCatalog catalog;
-			private V3(MEFv3.ComposableCatalog catalog) {
-				this.catalog = catalog;
+			public ComponentModel(MEFv3.ExportProvider exportProvider)
+			{
+				this.ExportProvider = exportProvider;
 			}
 
-			static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
-				new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
-				new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance)
-			);
-			public override VsMefContainerBuilder WithCatalog(IEnumerable<Type> types) {
-				// Consumers are expected to build their MEF catalogs before setting
-				// up the UI thread, so this should not create async deadlocks under
-				// normal usage.
-				return new V3(catalog.AddParts(
-					partDiscovery.CreatePartsAsync(types)
-						.GetAwaiter()
-						.GetResult()
-						.ThrowOnErrors()
-				));
+			public MEFv1.ICompositionService DefaultCompositionService
+			{
+				get { return ExportProvider.GetExport<MEFv1.ICompositionService>().Value; }
 			}
 
-			protected override IComponentModel BuildCore() {
-				var exportProvider = MEFv3.RuntimeComposition
-					.CreateRuntimeComposition(MEFv3.CompositionConfiguration.Create(catalog).ThrowOnErrors())
-					.CreateExportProviderFactory()
-					.CreateExportProvider();
-				return new ComponentModel(exportProvider);
+			public MEFv1.Hosting.ExportProvider DefaultExportProvider
+			{
+				get { return ExportProvider.AsExportProvider(); }
 			}
 
-			class ComponentModel : IComponentModel {
-				public readonly MEFv3.ExportProvider ExportProvider;
+			public MEFv1.Primitives.ComposablePartCatalog DefaultCatalog { get { throw new NotSupportedException(); } }
+			public MEFv1.Primitives.ComposablePartCatalog GetCatalog(string catalogName) { throw new NotSupportedException(); }
 
-				public ComponentModel(MEFv3.ExportProvider exportProvider) {
-					this.ExportProvider = exportProvider;
-				}
-
-
-				public MEFv1.ICompositionService DefaultCompositionService {
-					get { return ExportProvider.GetExport<MEFv1.ICompositionService>().Value; }
-				}
-
-				public MEFv1.Hosting.ExportProvider DefaultExportProvider {
-					get { return ExportProvider.AsExportProvider(); }
-				}
-
-				public MEFv1.Primitives.ComposablePartCatalog DefaultCatalog { get { throw new NotSupportedException(); } }
-				public MEFv1.Primitives.ComposablePartCatalog GetCatalog(string catalogName) { throw new NotSupportedException(); }
-
-				public IEnumerable<T> GetExtensions<T>() where T : class { return ExportProvider.GetExportedValues<T>(); }
-				public T GetService<T>() where T : class { return ExportProvider.GetExportedValue<T>(); }
-			}
+			public IEnumerable<T> GetExtensions<T>() where T : class { return ExportProvider.GetExportedValues<T>(); }
+			public T GetService<T>() where T : class { return ExportProvider.GetExportedValue<T>(); }
 		}
 	}
 }
