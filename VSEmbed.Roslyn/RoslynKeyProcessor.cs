@@ -158,7 +158,6 @@ namespace VSEmbed.Roslyn {
 			AddIntCommand(ModifierKeys.Control | ModifierKeys.Shift, Key.Z, "ExecuteRedo", 1);
 
 			// TODO: Export IDocumentNavigationService to allow F12
-			// TODO: Invoke peek from IntellisenseCommandFilter
 			// TODO: ExecuteCommentBlock, ExecuteFormatSelection, ExecuteFormatDocument, ExecuteInsertSnippet, ExecuteInsertComment, ExecuteSurroundWith
 		}
 		#endregion
