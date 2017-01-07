@@ -74,10 +74,6 @@ namespace VSEmbed
 			VsVersion = vsVersion;
 			InstallationDirectory = GetInstallationDirectory(VsVersion);
 			TryLoadInteropAssembly(InstallationDirectory);
-			AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve_VS;
-
-			if (RoslynAssemblyPath != null)
-				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve_Roslyn;
 		}
 
 		///<summary>Gets the version of Visual Studio that will be loaded.  This cannot be changed, because the CLR caches assembly loads.</summary>
@@ -87,28 +83,7 @@ namespace VSEmbed
 		public static string InstallationDirectory { get; private set; }
 
 		static readonly Regex versionMatcher = new Regex(@"(?<=\.)\d+\.0$");
-		static Assembly CurrentDomain_AssemblyResolve_VS(object sender, ResolveEventArgs args) {
-			if (!args.Name.StartsWith("Microsoft.VisualStudio"))
-				return null;
 
-			var name = new AssemblyName(args.Name);
-			if (name.Version != null && name.Version.Major == VsVersion.Major)
-				return null;	// Don't recurse.  I check the major version only because AssemblyName will resolve the build number from the GAC.
-
-			// Always specify a complete version to avoid partial assembly loading, which skips the GAC.
-			name.Version = new Version(VsVersion.Major, VsVersion.Minor, 0, 0);
-			name.Name = versionMatcher.Replace(name.Name, VsVersion.ToString(2));
-			Debug.WriteLine("Redirecting load of " + args.Name + ",\tfrom " + (args.RequestingAssembly == null ? "(unknown)" : args.RequestingAssembly.FullName));
-
-			try {
-				return Assembly.Load(name);
-			} catch (FileNotFoundException) {
-				if (name.Name.EndsWith(".resources"))
-					return LoadResourceDll(name, InstallationDirectory, name.CultureInfo)
-						?? LoadResourceDll(name, InstallationDirectory, name.CultureInfo.Parent);
-				return Assembly.LoadFile(Path.Combine(InstallationDirectory, name.Name + ".dll"));
-			}
-		}
 		static Assembly LoadResourceDll(AssemblyName name, string baseDirectory, CultureInfo culture) {
 			var dllPath = Path.Combine(baseDirectory, culture.Name, name.Name + ".dll");
 			if (!File.Exists(dllPath))
@@ -135,22 +110,6 @@ namespace VSEmbed
 			"System.Composition.AttributedModel",		// New to VS2015 Preview
 			"Microsoft.VisualStudio.Composition"		// For VS MEF in VS2015 Preview
 		};
-		static Assembly CurrentDomain_AssemblyResolve_Roslyn(object sender, ResolveEventArgs args) {
-			if (!RoslynAssemblyPrefixes.Any(args.Name.StartsWith))
-				return null;
-
-			Debug.WriteLine("Redirecting load of " + args.Name + ",\tfrom " + (args.RequestingAssembly == null ? "(unknown)" : args.RequestingAssembly.FullName));
-
-			var name = new AssemblyName(args.Name);
-			var dllPath = Path.Combine(RoslynAssemblyPath, name.Name + ".dll");
-			if (File.Exists(dllPath))
-				return Assembly.LoadFile(dllPath);
-			else if (name.Name.EndsWith(".resources"))
-				return LoadResourceDll(name, RoslynAssemblyPath, name.CultureInfo)
-					?? LoadResourceDll(name, RoslynAssemblyPath, name.CultureInfo.Parent);
-			else
-				return null;
-		}
 
 		/// <summary>
 		/// The interop assembly isn't included in the GAC and it doesn't offer any MEF components (it's
