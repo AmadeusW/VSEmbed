@@ -25,23 +25,18 @@ namespace VSEmbed.Roslyn {
 		readonly ILightBulbBroker lightBulbBroker;
 		readonly ISuggestedActionCategoryRegistryService suggestedActionCategoryRegistryService;
 		readonly ISmartTagBroker smartTagBroker;
-		readonly IPeekBroker peekBroker;
 
-		public Dev14KeyProcessor(IWpfTextView wpfTextView, ILightBulbBroker lightBulbBroker, ISuggestedActionCategoryRegistryService suggestedActionCategoryRegistryService, ISmartTagBroker smartTagBroker, IPeekBroker peekBroker) {
+		public Dev14KeyProcessor(IWpfTextView wpfTextView, ILightBulbBroker lightBulbBroker, ISuggestedActionCategoryRegistryService suggestedActionCategoryRegistryService, ISmartTagBroker smartTagBroker) {
 			this.wpfTextView = wpfTextView;
 			this.lightBulbBroker = lightBulbBroker;
 			this.suggestedActionCategoryRegistryService = suggestedActionCategoryRegistryService;
 			this.smartTagBroker = smartTagBroker;
-			this.peekBroker = peekBroker;
 
 			AddShortcuts();
 		}
 
 		void AddShortcuts() {
 			AddControlCommand(Key.OemPeriod, TryShowSuggestedActions);
-
-			// Alt+regular keys doesn't trigger this at all
-			AddCommand(Key.F12, TryPeek);
 		}
 
 		bool TryShowSuggestedActions() {
@@ -64,11 +59,8 @@ namespace VSEmbed.Roslyn {
 			session.State = SmartTagState.Expanded;
 			return true;
 		}
-
-		bool TryPeek() {
-			return peekBroker.TriggerPeekSession(wpfTextView, PredefinedPeekRelationships.Definitions.Name) != null;
-		}
 	}
+
 	[Export(typeof(IChainedKeyProcessorProvider))]
 	[ContentType("text")]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
@@ -83,9 +75,6 @@ namespace VSEmbed.Roslyn {
 		[Import]
 		public ISuggestedActionCategoryRegistryService SuggestedActionCategoryRegistryService { get; set; }
 
-		[Import]
-		public IPeekBroker PeekBroker { get; set; }
-
 		//I'm limiting us to a single keyprocessor and therefore a single wpfTextView
 		private Dev14KeyProcessor keyProcessor = null;
 
@@ -93,7 +82,7 @@ namespace VSEmbed.Roslyn {
 		{
 			if (keyProcessor == null)
 			{
-				return new Dev14KeyProcessor(wpfTextView, LightBulbBroker, SuggestedActionCategoryRegistryService, SmartTagBroker, PeekBroker);
+				return new Dev14KeyProcessor(wpfTextView, LightBulbBroker, SuggestedActionCategoryRegistryService, SmartTagBroker);
 			}
 
 			return keyProcessor;

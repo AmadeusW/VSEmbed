@@ -42,7 +42,7 @@ namespace VSEmbed
 			// SLaks: Needed for VisualStudioWaitIndicator & probably others
 			"Microsoft.VisualStudio.Editor.Implementation",
 
-			// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
+			//// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
 			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
 		};
 
