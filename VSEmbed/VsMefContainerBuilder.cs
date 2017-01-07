@@ -23,16 +23,33 @@ namespace VSEmbed
 
 		static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
 			new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
-			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance)
-		);
+			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
-		private VsMefContainerBuilder(MEFv3.ComposableCatalog catalog)
-		{
-			this.catalog = catalog;
-		}
+		private static readonly string[] EditorComponents = {
+			// JaredPar: Core editor components
+			"Microsoft.VisualStudio.Platform.VSEditor",
 
-		#region Export Exclusion
-		static readonly HashSet<string> excludedTypes = new HashSet<string> {
+			// JaredPar: Not entirely sure why this is suddenly needed
+			"Microsoft.VisualStudio.Text.Internal",
+
+			// JaredPar: Must include this because several editor options are actually stored as exported information 
+			// on this DLL.  Including most importantly, the tabsize information
+			"Microsoft.VisualStudio.Text.Logic",
+
+			// JaredPar: Include this DLL to get several more EditorOptions including WordWrapStyle
+			"Microsoft.VisualStudio.Text.UI",
+
+			// JaredPar: Include this DLL to get more EditorOptions values and the core editor
+			"Microsoft.VisualStudio.Text.UI.Wpf",
+
+			// SLaks: Needed for VisualStudioWaitIndicator & probably others
+			"Microsoft.VisualStudio.Editor.Implementation",
+
+			// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
+			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
+		};
+
+		static readonly string[] excludedTypes = {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
 			// It also causes strange and fatal AccessViolations.
 			"Microsoft.VisualStudio.Editor.Implementation.ExtensionErrorHandler",
@@ -53,24 +70,22 @@ namespace VSEmbed
 			// I export my own direct SVsServiceProvider
 			"Microsoft.VisualStudio.ComponentModelHost.VsComponentModelHostExporter"
 		};
-		///<summary>Prevents an exported type from being included in the created MEF container.</summary>
-		///<remarks>Call this method if an exported type doesn't work outside Visual Studio.</remarks>
-		public static void ExcludeExport(string fullTypeName)
-		{
-			excludedTypes.Add(fullTypeName);
-		}
-		#endregion
 
-		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
+		private VsMefContainerBuilder(MEFv3.ComposableCatalog catalog)
 		{
-			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
+			this.catalog = catalog;
 		}
 
 		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
 		public VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies)
 		{
 			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
+		}
+
+		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
+		public VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
+		{
+			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
 		}
 
 		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)
@@ -100,31 +115,6 @@ namespace VSEmbed
 			var container = new ComponentModel(exportProvider);
 			VsServiceProvider.Instance.SetMefContainer(container);
 		}
-
-		#region Catalog Setup
-		private static readonly string[] EditorComponents = {
-			// JaredPar: Core editor components
-			"Microsoft.VisualStudio.Platform.VSEditor",
-
-			// JaredPar: Not entirely sure why this is suddenly needed
-			"Microsoft.VisualStudio.Text.Internal",
-
-			// JaredPar: Must include this because several editor options are actually stored as exported information 
-			// on this DLL.  Including most importantly, the tabsize information
-			"Microsoft.VisualStudio.Text.Logic",
-
-			// JaredPar: Include this DLL to get several more EditorOptions including WordWrapStyle
-			"Microsoft.VisualStudio.Text.UI",
-
-			// JaredPar: Include this DLL to get more EditorOptions values and the core editor
-			"Microsoft.VisualStudio.Text.UI.Wpf",
-
-			// SLaks: Needed for VisualStudioWaitIndicator & probably others
-			"Microsoft.VisualStudio.Editor.Implementation",
-
-			// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
-			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
-		};
 
 		///<summary>Creates a new builder, including catalogs for the Roslyn language services.</summary>
 		public VsMefContainerBuilder WithRoslynCatalogs()
@@ -164,13 +154,6 @@ namespace VSEmbed
 
 		}
 
-		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
-		public VsMefContainerBuilder WithEditorCatalogs()
-		{
-			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
-				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
-		}
-		#endregion
 		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
 		public static VsMefContainerBuilder CreateDefault()
 		{
@@ -179,6 +162,13 @@ namespace VSEmbed
 				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration"));
 			
 			return containerBuilder.WithEditorCatalogs().WithRoslynCatalogs();
+		}
+
+		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
+		public VsMefContainerBuilder WithEditorCatalogs()
+		{
+			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
+				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
 		}
 
 		class ComponentModel : IComponentModel
