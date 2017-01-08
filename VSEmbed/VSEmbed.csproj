@@ -37,6 +37,10 @@
     <DocumentationFile>bin\Release\VSEmbed.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BasicUndo, Version=0.0.0.0, Culture=neutral, PublicKeyToken=d60426e557e4842b, processorArchitecture=MSIL">
+      <HintPath>..\packages\BasicUndo.0.9.3\lib\net45\BasicUndo.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <Private>False</Private>
@@ -137,7 +141,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Editor\ChainedKeyProcessor.cs" />
-    <Compile Include="Exports\BasicUndoHistoryRegistry.cs" />
     <Compile Include="Exports\KeyProcessorInvoker.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Controls\TextViewHost.cs" />
