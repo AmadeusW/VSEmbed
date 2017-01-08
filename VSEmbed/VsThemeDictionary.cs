@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -13,8 +12,9 @@ using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-#pragma warning disable 0436	// Tell the non-Roslyn compiler to ignore conflicts with inaccessible NoPIA types
-namespace VSEmbed {
+#pragma warning disable 0436 // Tell the non-Roslyn compiler to ignore conflicts with inaccessible NoPIA types
+namespace VSEmbed
+{
 	///<summary>A <see cref="ResourceDictionary"/> that exposes resource keys for a Visual Studio color theme.</summary>
 	public class VsThemeDictionary : ResourceDictionary {
 
@@ -254,7 +254,8 @@ namespace VSEmbed {
 }
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member; no need to document NoPIA interfaces
-namespace Microsoft.Internal.VisualStudio.Shell.Interop {
+namespace Microsoft.Internal.VisualStudio.Shell.Interop
+{
 	[CompilerGenerated, Guid("413D8344-C0DB-4949-9DBC-69C12BADB6AC"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), TypeIdentifier]
 	[ComImport]
 	public interface IVsColorTheme {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -18,7 +17,8 @@ using VSEmbed.Services;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
 using Shell = Microsoft.VisualStudio.Shell;
 
-namespace VSEmbed {
+namespace VSEmbed
+{
 	///<summary>An out-of-process implementation of Visual Studio's singleton OLE ServiceProvider.</summary>
 	///<remarks>
 	/// Visual Studio services use this class, both through MEF SVsServiceProvider and

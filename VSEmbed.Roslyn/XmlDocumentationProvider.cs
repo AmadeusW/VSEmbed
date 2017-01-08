@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace VSEmbed.Roslyn {
+namespace VSEmbed.Roslyn
+{
 	///<summary>
 	/// A <see cref="DocumentationProvider"/> that correctly returns XML tags in the content, working around https://roslyn.codeplex.com/workitem/406. 
 	///</summary>

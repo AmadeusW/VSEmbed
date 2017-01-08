@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,11 +9,11 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace VSEmbed.Services {
+namespace VSEmbed.Services
+{
 	// This file contains services that are more than stubs, but are not very complicated.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member; consult MSDN on the base interfaces.
 
@@ -216,7 +212,8 @@ namespace VSEmbed.Services {
 	}
 }
 
-namespace Microsoft.Internal.VisualStudio.Shell.Interop {
+namespace Microsoft.Internal.VisualStudio.Shell.Interop
+{
 	[CompilerGenerated, Guid("D73DC67C-3E91-4073-9A5E-5D09AA74529B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), TypeIdentifier]
 	[ComImport]
 	public interface IVsWindowManager2 {
