@@ -67,9 +67,6 @@ namespace VSEmbed
 					{ typeof(SUIHostLocale).GUID, new SystemUIHostLocale() },
 					{ typeof(SVsFontAndColorCacheManager).GUID, new StubVsFontAndColorCacheManager() },
 
-					// Used by Roslyn's VisualStudioWaitIndicator
-					{ typeof(SVsThreadedWaitDialogFactory).GUID, new BaseWaitDialogFactory() },
-
 					// Used by Dev14's VsImageLoader, which is needed for Roslyn IntelliSense
 					{ typeof(SVsAppId).GUID, new SimpleVsAppId() },
 
@@ -85,9 +82,6 @@ namespace VSEmbed
 			Shell.ServiceProvider.CreateFromSetSite(sp);
 			Instance = sp;
 
-			// Add services that use IServiceProvider here
-			sp.AddTaskSchedulerService();
-
 			// The designer loads Microsoft.VisualStudio.Shell.XX.0,
 			// which we cannot reference directly (to avoid breaking
 			// older versions). Therefore, I set the global property
@@ -99,20 +93,6 @@ namespace VSEmbed
 				type.GetMethod("CreateFromSetSite", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static)
 					.Invoke(null, new[] { sp });
 			}
-		}
-
-		private void AddTaskSchedulerService() {
-			// Force its singleton instance property, used by VsTaskSchedulerService, to be set
-			var package = new Microsoft.VisualStudio.Services.TaskSchedulerPackage();
-			((IVsPackage)package).SetSite(this);
-
-			// This ctor calls other services from the ServiceProvider, so it must be added after initialization.
-			// VsIdleTimeScheduler uses VsShell.ShellPropertyChanged to wait for an OleComponentManager to exist,
-			// then calls FRegisterComponent().  I don't know how to implement that, so my VsShell will not raise
-			// event, leaving it in limbo.  This means that idle processing won't work; I don't know where that's
-			// used.
-			// Used by JoinableTaskFactory
-			AddService(typeof(SVsTaskSchedulerService), Activator.CreateInstance(typeof(VsMenu).Assembly.GetType("Microsoft.VisualStudio.Services.VsTaskSchedulerService")));
 		}
 
 		///<summary>Gets the MEF IComponentModel installed in this ServiceProvider, if any.</summary>

@@ -15,61 +15,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace VSEmbed.Services
 {
 	// This file contains services that are more than stubs, but are not very complicated.
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member; consult MSDN on the base interfaces.
-
-	///<summary>A WaitDialogFactory that does not show any UI.  Derived classes can inherit WaitDialog to show some UI.</summary>
-	public class BaseWaitDialogFactory : IVsThreadedWaitDialogFactory {
-		public virtual int CreateInstance(out IVsThreadedWaitDialog2 ppIVsThreadedWaitDialog) {
-			ppIVsThreadedWaitDialog = new WaitDialog();
-			return 0;
-		}
-		protected class WaitDialog : IVsThreadedWaitDialog3 {
-			// TODO: Actually show some UI
-			public virtual void EndWaitDialog(out int pfCanceled) {
-				pfCanceled = 0;
-			}
-
-			public virtual void HasCanceled(out bool pfCanceled) {
-				pfCanceled = false;
-			}
-
-			public virtual void StartWaitDialog(string szWaitCaption, string szWaitMessage, string szProgressText, object varStatusBmpAnim, string szStatusBarText, int iDelayToShowDialog, bool fIsCancelable, bool fShowMarqueeProgress) { }
-
-			public virtual void StartWaitDialogWithCallback(string szWaitCaption, string szWaitMessage, string szProgressText, object varStatusBmpAnim, string szStatusBarText, bool fIsCancelable, int iDelayToShowDialog, bool fShowProgress, int iTotalSteps, int iCurrentStep, IVsThreadedWaitDialogCallback pCallback) { }
-
-			public virtual void StartWaitDialogWithPercentageProgress(string szWaitCaption, string szWaitMessage, string szProgressText, object varStatusBmpAnim, string szStatusBarText, bool fIsCancelable, int iDelayToShowDialog, int iTotalSteps, int iCurrentStep) {
-			}
-
-			public virtual void UpdateProgress(string szUpdatedWaitMessage, string szProgressText, string szStatusBarText, int iCurrentStep, int iTotalSteps, bool fDisableCancel, out bool pfCanceled) {
-				pfCanceled = false;
-			}
-
-			int IVsThreadedWaitDialog2.EndWaitDialog(out int pfCanceled) {
-				EndWaitDialog(out pfCanceled);
-				return 0;
-			}
-
-			int IVsThreadedWaitDialog2.HasCanceled(out bool pfCanceled) {
-				HasCanceled(out pfCanceled);
-				return 0;
-			}
-
-			int IVsThreadedWaitDialog2.StartWaitDialog(string szWaitCaption, string szWaitMessage, string szProgressText, object varStatusBmpAnim, string szStatusBarText, int iDelayToShowDialog, bool fIsCancelable, bool fShowMarqueeProgress) {
-				StartWaitDialog(szWaitCaption, szWaitMessage, szProgressText, varStatusBmpAnim, szStatusBarText, iDelayToShowDialog, fIsCancelable, fShowMarqueeProgress);
-				return 0;
-			}
-
-			int IVsThreadedWaitDialog2.StartWaitDialogWithPercentageProgress(string szWaitCaption, string szWaitMessage, string szProgressText, object varStatusBmpAnim, string szStatusBarText, bool fIsCancelable, int iDelayToShowDialog, int iTotalSteps, int iCurrentStep) {
-				StartWaitDialogWithPercentageProgress(szWaitCaption, szWaitMessage, szProgressText, varStatusBmpAnim, szStatusBarText, fIsCancelable, iDelayToShowDialog, iTotalSteps, iCurrentStep);
-				return 0;
-			}
-
-			int IVsThreadedWaitDialog2.UpdateProgress(string szUpdatedWaitMessage, string szProgressText, string szStatusBarText, int iCurrentStep, int iTotalSteps, bool fDisableCancel, out bool pfCanceled) {
-				UpdateProgress(szUpdatedWaitMessage, szProgressText, szStatusBarText, iTotalSteps, iCurrentStep, fDisableCancel, out pfCanceled);
-				return 0;
-			}
-		}
-	}
 
 #pragma warning disable 0436	// Tell the non-Roslyn compiler to ignore conflicts with inaccessible NoPIA types
 	// This class can only be used if VS is set up after the UI thread is created.
