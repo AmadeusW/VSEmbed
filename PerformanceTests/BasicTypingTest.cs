@@ -44,15 +44,7 @@ namespace PerformanceTests
 			initializeRoslynForegroundThreadDataObject();
 			_window = new MainWindow();
 			_window.Show();
-			if(CurrentContentType == ContentType.text)
-			{
-				_window.SetContentType(nameof(ContentType.text));
-			}
-			else if(CurrentContentType == ContentType.CSharp)
-			{
-				_window.SetContentType(nameof(ContentType.CSharp));
-			}
-
+			_window.SetContentType(CurrentContentType.ToString());
 		}
 
 		[Cleanup]
