@@ -138,7 +138,6 @@
     </Compile>
     <Compile Include="Editor\ChainedKeyProcessor.cs" />
     <Compile Include="Exports\KeyProcessorInvoker.cs" />
-    <Compile Include="NativeMethods.cs" />
     <Compile Include="Controls\TextViewHost.cs" />
     <Compile Include="Exports\StandardKeyProcessor.cs" />
     <Compile Include="Exports\Simple Exports.cs" />
