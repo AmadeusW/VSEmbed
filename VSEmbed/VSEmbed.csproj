@@ -141,9 +141,6 @@
     <Compile Include="Exports\KeyProcessorInvoker.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Controls\TextViewHost.cs" />
-    <Compile Include="Controls\VsResizeGrip.xaml.cs">
-      <DependentUpon>VsResizeGrip.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Exports\StandardKeyProcessor.cs" />
     <Compile Include="Exports\Simple Exports.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,15 +151,7 @@
     <Compile Include="TextViewExtensions.cs" />
     <Compile Include="VsLoader.cs" />
     <Compile Include="VsMefContainerBuilder.cs" />
-    <Compile Include="VsResourceKeys.cs" />
     <Compile Include="VsServiceProvider.cs" />
-    <Compile Include="VsThemeDictionary.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Controls\VsResizeGrip.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
