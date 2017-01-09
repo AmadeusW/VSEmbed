@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -18,7 +15,8 @@ using VSEmbed.Services;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
 using Shell = Microsoft.VisualStudio.Shell;
 
-namespace VSEmbed {
+namespace VSEmbed
+{
 	///<summary>An out-of-process implementation of Visual Studio's singleton OLE ServiceProvider.</summary>
 	///<remarks>
 	/// Visual Studio services use this class, both through MEF SVsServiceProvider and
@@ -50,7 +48,6 @@ namespace VSEmbed {
 			var esm = ExternalSettingsManager.CreateForApplication(Path.Combine(VsLoader.InstallationDirectory, "devenv.exe"));
 			var sp = new VsServiceProvider
 			{
-				UIShell = new ThemedVsUIShell(),
 				serviceInstances = {
 					// Used by Shell.ServiceProvider initialization
 					{ typeof(SVsActivityLog).GUID, new StubVsActivityLog() },
@@ -83,25 +80,11 @@ namespace VSEmbed {
 				}
 			};
 
-			sp.AddService(typeof(SVsUIShell), sp.UIShell);
-
 			Shell.ServiceProvider.CreateFromSetSite(sp);
 			Instance = sp;
 
 			// Add services that use IServiceProvider here
 			sp.AddTaskSchedulerService();
-
-			// The designer loads Microsoft.VisualStudio.Shell.XX.0,
-			// which we cannot reference directly (to avoid breaking
-			// older versions). Therefore, I set the global property
-			// for every available version using Reflection instead.
-			foreach (var vsVersion in VsLoader.FindAllVersions().Where(v => v.Major >= 10)) {
-				var type = Type.GetType("Microsoft.VisualStudio.Shell.ServiceProvider, Microsoft.VisualStudio.Shell." + vsVersion.ToString(2));
-				if (type == null)
-					continue;
-				type.GetMethod("CreateFromSetSite", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static)
-					.Invoke(null, new[] { sp });
-			}
 		}
 
 		private void AddTaskSchedulerService() {
@@ -130,9 +113,6 @@ namespace VSEmbed {
 			ComponentModel = container;
 			AddService(typeof(SComponentModel), ComponentModel);
 		}
-
-		///<summary>Gets the <see cref="IVsUIShell"/> implementation exported by this provider.  The <see cref="ThemedVsUIShell.Theme"/> property must be kept in sync with the display theme for calls from VS services.</summary>
-		public ThemedVsUIShell UIShell { get; private set; }
 
 		readonly Dictionary<Guid, object> serviceInstances = new Dictionary<Guid, object>();
 

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
-namespace VSEmbed.Controls {
+namespace VSEmbed.Controls
+{
 	///<summary>A WPF control that embeds a Visual Studio editor.</summary>
 	public class TextViewHost : ContentPresenter {
 		///<summary>Gets the <see cref="IWpfTextView"/> displayed by the control.</summary>
@@ -19,8 +16,6 @@ namespace VSEmbed.Controls {
 		///<summary>Creates a <see cref="TextViewHost"/>.  <see cref="VsMefContainerBuilder"/> must be set up before creating this.</summary>
 		public TextViewHost() {
 			if (VsServiceProvider.Instance.ComponentModel == null) {
-				if (VsLoader.IsDesignMode)
-					return;
 				throw new InvalidOperationException("To use TextViewHost, you must first install a MEF container into the ServiceProvider by calling VsMefContainerBuilder.Initialize().");
 			}
 			var bufferFactory = VsServiceProvider.Instance.ComponentModel.GetService<ITextBufferFactoryService>();

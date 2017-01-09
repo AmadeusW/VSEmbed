@@ -1,12 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using VSEmbed;
 using VSEmbed.DemoApp;
 
@@ -48,15 +44,7 @@ namespace PerformanceTests
 			initializeRoslynForegroundThreadDataObject();
 			_window = new MainWindow();
 			_window.Show();
-			if(CurrentContentType == ContentType.text)
-			{
-				_window.SetContentType(nameof(ContentType.text));
-			}
-			else if(CurrentContentType == ContentType.CSharp)
-			{
-				_window.SetContentType(nameof(ContentType.CSharp));
-			}
-
+			_window.SetContentType(CurrentContentType.ToString());
 		}
 
 		[Cleanup]

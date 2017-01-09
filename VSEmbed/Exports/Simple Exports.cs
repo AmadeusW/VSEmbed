@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Storage;
 
-namespace VSEmbed.Exports {
+namespace VSEmbed.Exports
+{
 	// This file contains trivially simply MEF exports
 
 	[Export(typeof(IExtensionErrorHandler))]

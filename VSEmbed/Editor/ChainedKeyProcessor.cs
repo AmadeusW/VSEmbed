@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace VSEmbed.Editor {
+namespace VSEmbed.Editor
+{
 	///<summary>A base class which handles keystrokes, or passes them on to the next KeyProcessor in the chain.</summary>
 	public abstract class ChainedKeyProcessor {
 		///<summary>Handles the KeyDown event, or passes through to the next processor in the chain.</summary>

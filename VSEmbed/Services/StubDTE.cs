@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using EnvDTE;
-namespace VSEmbed.Services {
+namespace VSEmbed.Services
+{
 	// Used by KeyBindingHelper.GetKeyBinding, which is used by VSLightBulbPresenterStyle.
 	class StubDTE : DTE {
 		public Commands Commands { get; } = new StubCommands();

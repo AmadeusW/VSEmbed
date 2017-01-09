@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using VSEmbed;
 
-namespace VSEmbed.DemoApp {
+namespace VSEmbed.DemoApp
+{
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>

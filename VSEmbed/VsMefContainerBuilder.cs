@@ -25,6 +25,11 @@ namespace VSEmbed
 			new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
 			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
+		private static readonly string[] UndoComponents =
+		{
+			"BasicUndo"
+		};
+
 		private static readonly string[] EditorComponents = {
 			// JaredPar: Core editor components
 			"Microsoft.VisualStudio.Platform.VSEditor",
@@ -46,7 +51,7 @@ namespace VSEmbed
 			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
 		};
 
-		static readonly string[] excludedTypes = {
+		private static readonly string[] excludedTypes = {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
 			// It also causes strange and fatal AccessViolations.
 			"Microsoft.VisualStudio.Editor.Implementation.ExtensionErrorHandler",
@@ -165,6 +170,7 @@ namespace VSEmbed
 		public VsMefContainerBuilder WithEditorCatalogs()
 		{
 			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
+				  .WithFilteredCatalogs(UndoComponents.Select(n=>Assembly.Load(n)))
 				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
 		}
 
