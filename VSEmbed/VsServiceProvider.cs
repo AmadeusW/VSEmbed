@@ -50,7 +50,6 @@ namespace VSEmbed
 			var esm = ExternalSettingsManager.CreateForApplication(Path.Combine(VsLoader.InstallationDirectory, "devenv.exe"));
 			var sp = new VsServiceProvider
 			{
-				UIShell = new ThemedVsUIShell(),
 				serviceInstances = {
 					// Used by Shell.ServiceProvider initialization
 					{ typeof(SVsActivityLog).GUID, new StubVsActivityLog() },
@@ -82,8 +81,6 @@ namespace VSEmbed
 
 				}
 			};
-
-			sp.AddService(typeof(SVsUIShell), sp.UIShell);
 
 			Shell.ServiceProvider.CreateFromSetSite(sp);
 			Instance = sp;
@@ -130,9 +127,6 @@ namespace VSEmbed
 			ComponentModel = container;
 			AddService(typeof(SComponentModel), ComponentModel);
 		}
-
-		///<summary>Gets the <see cref="IVsUIShell"/> implementation exported by this provider.  The <see cref="ThemedVsUIShell.Theme"/> property must be kept in sync with the display theme for calls from VS services.</summary>
-		public ThemedVsUIShell UIShell { get; private set; }
 
 		readonly Dictionary<Guid, object> serviceInstances = new Dictionary<Guid, object>();
 
