@@ -137,7 +137,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Editor\ChainedKeyProcessor.cs" />
-    <Compile Include="Exports\BasicUndoHistoryRegistry.cs" />
     <Compile Include="Exports\KeyProcessorInvoker.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Controls\TextViewHost.cs" />
