@@ -90,13 +90,6 @@ namespace VSEmbed
 		public static string InstallationDirectory { get; private set; }
 
 		static readonly Regex versionMatcher = new Regex(@"(?<=\.)\d+\.0$");
-		static Assembly LoadResourceDll(AssemblyName name, string baseDirectory, CultureInfo culture)
-		{
-			var dllPath = Path.Combine(baseDirectory, culture.Name, name.Name + ".dll");
-			if (!File.Exists(dllPath))
-				return null;
-			return Assembly.LoadFile(dllPath);
-		}
 
 		///<summary>Gets the directory containing Roslyn assemblies, or null if this VS version does not contain Roslyn.</summary>
 		public static string RoslynAssemblyPath
@@ -109,6 +102,7 @@ namespace VSEmbed
 				return null;    // TODO: Predict GAC / versioning for Dev15
 			}
 		}
+
 		static readonly string[] RoslynAssemblyPrefixes = {
 			"Microsoft.CodeAnalysis",
 			"Roslyn.",  // For package assemblies like Roslyn.VisualStudio.Setup
@@ -130,9 +124,6 @@ namespace VSEmbed
 			var dllPath = Path.Combine(RoslynAssemblyPath, name.Name + ".dll");
 			if (File.Exists(dllPath))
 				return Assembly.LoadFile(dllPath);
-			else if (name.Name.EndsWith(".resources"))
-				return LoadResourceDll(name, RoslynAssemblyPath, name.CultureInfo)
-					?? LoadResourceDll(name, RoslynAssemblyPath, name.CultureInfo.Parent);
 			else
 				return null;
 		}
