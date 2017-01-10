@@ -128,9 +128,9 @@ namespace VSEmbed
 			// Necessary (together with ugly Reflection) to use WorkCoordinator.HighPriorityProcessor.
 			types.Add(Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.VisualStudioDocumentTrackingServiceFactory, " + "Microsoft.VisualStudio.LanguageServices"));
 
-			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance));
-			var x = containerBuilder.WithCatalog(types);
-			return x;
+			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
+				.WithCatalog(types);
+			return containerBuilder;
 		}
 
 		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)
@@ -152,11 +152,6 @@ namespace VSEmbed
 		///</summary>
 		public void Build()
 		{
-			var x = catalog.ToString();
-			var y = catalog.DiscoveredParts.Parts.OrderBy(n => n.Type.ToString());
-
-			var parts = string.Join("\n", y.Select(n => n.Type.ToString()));
-
 			var exportProvider = MEFv3.RuntimeComposition
 				.CreateRuntimeComposition(MEFv3.CompositionConfiguration.Create(catalog).ThrowOnErrors())
 				.CreateExportProviderFactory()
