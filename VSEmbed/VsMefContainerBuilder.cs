@@ -15,10 +15,6 @@ namespace VSEmbed
 	/// <remarks>Stolen, with much love and gratitude, from @JaredPar's EditorUtils.</remarks>
 	public class VsMefContainerBuilder
 	{
-		// I need to specify a full name to load from the GAC.
-		// The version is added by my AssemblyResolve handler.
-		const string VsFullNameSuffix = ", Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
-
 		readonly MEFv3.ComposableCatalog catalog;
 
 		static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
@@ -54,28 +50,25 @@ namespace VSEmbed
 
 		public static VsMefContainerBuilder CreateDefault()
 		{
-			var roslynFiles = new string[] {
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.Text.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.Desktop.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.dll",
-			};
+			var assemblyNames = new string[] {
+				"Microsoft.CodeAnalysis.CSharp.EditorFeatures",
+				"Microsoft.CodeAnalysis.CSharp.Features",
+				"Microsoft.CodeAnalysis.CSharp.Workspaces",
+				"Microsoft.CodeAnalysis.EditorFeatures",
+				"Microsoft.CodeAnalysis.EditorFeatures.Text",
+				"Microsoft.CodeAnalysis.Features",
+				"Microsoft.CodeAnalysis.VisualBasic.EditorFeatures",
+				"Microsoft.CodeAnalysis.VisualBasic.Features",
+				"Microsoft.CodeAnalysis.VisualBasic.Workspaces",
+				"Microsoft.CodeAnalysis.Workspaces.Desktop",
+				"Microsoft.CodeAnalysis.Workspaces",
 
-			var editorAssemblyNames = new string[]
-			{
-				"Microsoft.VisualStudio.Platform.VSEditor, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.Logic, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.UI, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.UI.Wpf, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Editor.Implementation, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Platform.VSEditor",
+				"Microsoft.VisualStudio.Text.Logic",
+				"Microsoft.VisualStudio.Text.UI",
+				"Microsoft.VisualStudio.Text.UI.Wpf",
+				"Microsoft.VisualStudio.Editor.Implementation",
+				"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider",
 
 				"Microsoft.VisualStudio.Composition.Configuration",
 				"VSEmbed.Roslyn",
@@ -85,8 +78,7 @@ namespace VSEmbed
 			//FileNames and AssemblyNames -> Assemblies
 			var assemblies = new List<Assembly>();
 			assemblies.Add(typeof(VsMefContainerBuilder).Assembly);
-			assemblies.AddRange(roslynFiles.Select(n => Assembly.LoadFile(n)));
-			assemblies.AddRange(editorAssemblyNames.Select(n => Assembly.Load(n)));
+			assemblies.AddRange(assemblyNames.Select(n => Assembly.Load(n)));
 
 			//Assemblies -> Types
 			var types = assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))).ToList();
