@@ -162,16 +162,11 @@ namespace VSEmbed
 			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
 				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
 				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration"));
-			
-			return containerBuilder.WithEditorCatalogs().WithRoslynCatalogs();
-		}
 
-		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
-		public VsMefContainerBuilder WithEditorCatalogs()
-		{
-			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
-				  .WithFilteredCatalogs(UndoComponents.Select(n=>Assembly.Load(n)))
-				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
+			return containerBuilder.WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
+				  .WithFilteredCatalogs(UndoComponents.Select(n => Assembly.Load(n)))
+				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly)
+				  .WithRoslynCatalogs();
 		}
 
 		class ComponentModel : IComponentModel
