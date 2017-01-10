@@ -79,8 +79,8 @@ namespace VSEmbed
 			InstallationDirectory = GetInstallationDirectory(VsVersion);
 			TryLoadInteropAssembly(InstallationDirectory);
 
-			if (RoslynAssemblyPath != null)
-				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve_Roslyn;
+			//if (RoslynAssemblyPath != null)
+			//	AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve_Roslyn;
 		}
 
 		///<summary>Gets the version of Visual Studio that will be loaded.  This cannot be changed, because the CLR caches assembly loads.</summary>
@@ -113,6 +113,7 @@ namespace VSEmbed
 			"System.Composition.AttributedModel",		// New to VS2015 Preview
 			"Microsoft.VisualStudio.Composition"		// For VS MEF in VS2015 Preview
 		};
+
 		static Assembly CurrentDomain_AssemblyResolve_Roslyn(object sender, ResolveEventArgs args)
 		{
 			if (!RoslynAssemblyPrefixes.Any(args.Name.StartsWith))
