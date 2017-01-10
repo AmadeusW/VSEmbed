@@ -70,12 +70,12 @@ namespace VSEmbed
 
 			var editorAssemblyNames = new string[]
 			{
-				"Microsoft.VisualStudio.Platform.VSEditor, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.Logic, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.UI, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Text.UI.Wpf, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Editor.Implementation, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
-				"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Platform.VSEditor",
+				"Microsoft.VisualStudio.Text.Logic",
+				"Microsoft.VisualStudio.Text.UI",
+				"Microsoft.VisualStudio.Text.UI.Wpf",
+				"Microsoft.VisualStudio.Editor.Implementation",
+				"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider",
 
 				"Microsoft.VisualStudio.Composition.Configuration",
 				"VSEmbed.Roslyn",
