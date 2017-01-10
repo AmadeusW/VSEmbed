@@ -84,12 +84,6 @@ namespace VSEmbed
 			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
 		}
 
-		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
-		{
-			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
-		}
-
 		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)
 		{
 			// Consumers are expected to build their MEF catalogs before setting
@@ -102,6 +96,21 @@ namespace VSEmbed
 					.ThrowOnErrors()
 			));
 		}
+
+
+		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
+		public static VsMefContainerBuilder CreateDefault()
+		{
+			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
+				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
+				.WithFilteredCatalogs(new List<Assembly>() { Assembly.Load("Microsoft.VisualStudio.Composition.Configuration") });
+
+			return containerBuilder.WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
+				  .WithFilteredCatalogs(UndoComponents.Select(n => Assembly.Load(n)))
+				  .WithFilteredCatalogs(new List<Assembly>() { typeof(VsMefContainerBuilder).Assembly })
+				  .WithRoslynCatalogs();
+		}
+
 
 		///<summary>
 		/// Creates a MEF container from this builder instance, and installs it into the global ServiceProvider.
@@ -130,7 +139,7 @@ namespace VSEmbed
 					.Where(a => new[] { "Features", "Workspaces" }.Any(Path.GetFileName(a).Contains))
 					.Where(a => !Path.GetFileName(a).Contains("Interactive"))
 					.Select(Assembly.LoadFile))
-				.WithFilteredCatalogs(Assembly.Load("VSEmbed.Roslyn"))
+				.WithFilteredCatalogs(new List<Assembly>() { Assembly.Load("VSEmbed.Roslyn") })
 				.WithCatalog(new[] {
 				// Roslyn formatter bug: https://roslyn.codeplex.com/workitem/382
 				// IWaitIndicator is internal, so I have no choice but to use the existing
@@ -154,19 +163,6 @@ namespace VSEmbed
 						   + "Microsoft.VisualStudio.LanguageServices"),
 				}.Where(t => t != null));
 
-		}
-
-		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
-		public static VsMefContainerBuilder CreateDefault()
-		{
-			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
-				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
-				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration"));
-
-			return containerBuilder.WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
-				  .WithFilteredCatalogs(UndoComponents.Select(n => Assembly.Load(n)))
-				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly)
-				  .WithRoslynCatalogs();
 		}
 
 		class ComponentModel : IComponentModel
