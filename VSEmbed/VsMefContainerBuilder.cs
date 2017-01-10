@@ -54,7 +54,6 @@ namespace VSEmbed
 
 		public static VsMefContainerBuilder CreateDefault()
 		{
-			//var assemblies = 
 			var roslynFiles = new string[] {
 				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll",
 				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Features.dll",
