@@ -25,32 +25,6 @@ namespace VSEmbed
 			new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
 			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
-		private static readonly string[] UndoComponents =
-		{
-			"BasicUndo"
-		};
-
-		private static readonly string[] EditorComponents = {
-			// JaredPar: Core editor components
-			"Microsoft.VisualStudio.Platform.VSEditor",
-
-			// JaredPar: Must include this because several editor options are actually stored as exported information 
-			// on this DLL.  Including most importantly, the tabsize information
-			"Microsoft.VisualStudio.Text.Logic",
-
-			// JaredPar: Include this DLL to get several more EditorOptions including WordWrapStyle
-			"Microsoft.VisualStudio.Text.UI",
-
-			// JaredPar: Include this DLL to get more EditorOptions values and the core editor
-			"Microsoft.VisualStudio.Text.UI.Wpf",
-
-			// SLaks: Needed for VisualStudioWaitIndicator & probably others
-			"Microsoft.VisualStudio.Editor.Implementation",
-
-			//// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
-			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
-		};
-
 		private static readonly string[] excludedTypes = {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
 			// It also causes strange and fatal AccessViolations.
