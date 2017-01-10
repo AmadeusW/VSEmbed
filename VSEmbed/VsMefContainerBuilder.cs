@@ -54,22 +54,19 @@ namespace VSEmbed
 
 		public static VsMefContainerBuilder CreateDefault()
 		{
-			var roslynFiles = new string[] {
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.Text.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Features.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.Desktop.dll",
-				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.dll",
-			};
+			var assemblyNames = new string[] {
+				"Microsoft.CodeAnalysis.CSharp.EditorFeatures",
+				"Microsoft.CodeAnalysis.CSharp.Features",
+				"Microsoft.CodeAnalysis.CSharp.Workspaces",
+				"Microsoft.CodeAnalysis.EditorFeatures",
+				"Microsoft.CodeAnalysis.EditorFeatures.Text",
+				"Microsoft.CodeAnalysis.Features",
+				"Microsoft.CodeAnalysis.VisualBasic.EditorFeatures",
+				"Microsoft.CodeAnalysis.VisualBasic.Features",
+				"Microsoft.CodeAnalysis.VisualBasic.Workspaces",
+				"Microsoft.CodeAnalysis.Workspaces.Desktop",
+				"Microsoft.CodeAnalysis.Workspaces",
 
-			var editorAssemblyNames = new string[]
-			{
 				"Microsoft.VisualStudio.Platform.VSEditor",
 				"Microsoft.VisualStudio.Text.Logic",
 				"Microsoft.VisualStudio.Text.UI",
@@ -85,8 +82,7 @@ namespace VSEmbed
 			//FileNames and AssemblyNames -> Assemblies
 			var assemblies = new List<Assembly>();
 			assemblies.Add(typeof(VsMefContainerBuilder).Assembly);
-			assemblies.AddRange(roslynFiles.Select(n => Assembly.LoadFile(n)));
-			assemblies.AddRange(editorAssemblyNames.Select(n => Assembly.Load(n)));
+			assemblies.AddRange(assemblyNames.Select(n => Assembly.Load(n)));
 
 			//Assemblies -> Types
 			var types = assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))).ToList();
