@@ -15,10 +15,6 @@ namespace VSEmbed
 	/// <remarks>Stolen, with much love and gratitude, from @JaredPar's EditorUtils.</remarks>
 	public class VsMefContainerBuilder
 	{
-		// I need to specify a full name to load from the GAC.
-		// The version is added by my AssemblyResolve handler.
-		const string VsFullNameSuffix = ", Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL";
-
 		readonly MEFv3.ComposableCatalog catalog;
 
 		static readonly MEFv3.PartDiscovery partDiscovery = MEFv3.PartDiscovery.Combine(
