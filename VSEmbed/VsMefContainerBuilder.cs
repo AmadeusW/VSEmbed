@@ -25,32 +25,6 @@ namespace VSEmbed
 			new MEFv3.AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
 			new MEFv3.AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
-		private static readonly string[] UndoComponents =
-		{
-			"BasicUndo"
-		};
-
-		private static readonly string[] EditorComponents = {
-			// JaredPar: Core editor components
-			"Microsoft.VisualStudio.Platform.VSEditor",
-
-			// JaredPar: Must include this because several editor options are actually stored as exported information 
-			// on this DLL.  Including most importantly, the tabsize information
-			"Microsoft.VisualStudio.Text.Logic",
-
-			// JaredPar: Include this DLL to get several more EditorOptions including WordWrapStyle
-			"Microsoft.VisualStudio.Text.UI",
-
-			// JaredPar: Include this DLL to get more EditorOptions values and the core editor
-			"Microsoft.VisualStudio.Text.UI.Wpf",
-
-			// SLaks: Needed for VisualStudioWaitIndicator & probably others
-			"Microsoft.VisualStudio.Editor.Implementation",
-
-			//// SLaks: Needed for IVsHierarchyItemManager, used by peek providers
-			"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider"
-		};
-
 		private static readonly string[] excludedTypes = {
 			// This uses IVsUIShell, which I haven't implemented, to show dialog boxes.
 			// It also causes strange and fatal AccessViolations.
@@ -78,16 +52,58 @@ namespace VSEmbed
 			this.catalog = catalog;
 		}
 
-		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public VsMefContainerBuilder WithFilteredCatalogs(IEnumerable<Assembly> assemblies)
+		public static VsMefContainerBuilder CreateDefault()
 		{
-			return WithCatalog(assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))));
-		}
+			var roslynFiles = new string[] {
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Features.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.EditorFeatures.Text.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Features.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Features.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.Desktop.dll",
+				@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\Microsoft.CodeAnalysis.Workspaces.dll",
+			};
 
-		///<summary>Creates a new builder, including a catalog with the types in a set of assemblies, excluding types that cause problems.</summary>
-		public VsMefContainerBuilder WithFilteredCatalogs(params Assembly[] assemblies)
-		{
-			return WithFilteredCatalogs((IEnumerable<Assembly>)assemblies);
+			var editorAssemblyNames = new string[]
+			{
+				"Microsoft.VisualStudio.Platform.VSEditor, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Text.Logic, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Text.UI, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Text.UI.Wpf, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Editor.Implementation, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+				"Microsoft.VisualStudio.Shell.TreeNavigation.HierarchyProvider, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL",
+
+				"Microsoft.VisualStudio.Composition.Configuration",
+				"VSEmbed.Roslyn",
+				"BasicUndo",
+			};
+
+			//FileNames and AssemblyNames -> Assemblies
+			var assemblies = new List<Assembly>();
+			assemblies.Add(typeof(VsMefContainerBuilder).Assembly);
+			assemblies.AddRange(roslynFiles.Select(n => Assembly.LoadFile(n)));
+			assemblies.AddRange(editorAssemblyNames.Select(n => Assembly.Load(n)));
+
+			//Assemblies -> Types
+			var types = assemblies.SelectMany(a => a.GetTypes().Where(t => !excludedTypes.Contains(t.FullName))).ToList();
+			// IWaitIndicator is internal, so I have no choice but to use the existing
+			// implementation. The rest of Microsoft.VisualStudio.LanguageServices.dll
+			// exports lots of VS interop types that I don't want.
+			types.Add(Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.Utilities.VisualStudioWaitIndicator, " + "Microsoft.VisualStudio.LanguageServices"));
+			// Enables rename (but breaks F12).
+			types.Add(Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.VisualStudioDocumentNavigationServiceFactory, " + "Microsoft.VisualStudio.LanguageServices"));
+			// VS2015 Preview version of above type.
+			types.Add(Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.PreviewPane.PreviewPaneService, " + "Microsoft.VisualStudio.LanguageServices"));
+			// Necessary (together with ugly Reflection) to use WorkCoordinator.HighPriorityProcessor.
+			types.Add(Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.VisualStudioDocumentTrackingServiceFactory, " + "Microsoft.VisualStudio.LanguageServices"));
+
+			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
+				.WithCatalog(types);
+			return containerBuilder;
 		}
 
 		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)
@@ -116,62 +132,6 @@ namespace VSEmbed
 
 			var container = new ComponentModel(exportProvider);
 			VsServiceProvider.Instance.SetMefContainer(container);
-		}
-
-		///<summary>Creates a new builder, including catalogs for the Roslyn language services.</summary>
-		public VsMefContainerBuilder WithRoslynCatalogs()
-		{
-			if (VsLoader.RoslynAssemblyPath == null)
-				return this;
-
-			return WithFilteredCatalogs(
-				// Only include assemblies that actually export useful MEF types.
-				Directory.EnumerateFiles(VsLoader.RoslynAssemblyPath, "Microsoft.CodeAnalysis.*.dll")
-					.Where(a => new[] { "Features", "Workspaces" }.Any(Path.GetFileName(a).Contains))
-					.Where(a => !Path.GetFileName(a).Contains("Interactive"))
-					.Select(Assembly.LoadFile))
-				.WithFilteredCatalogs(Assembly.Load("VSEmbed.Roslyn"))
-				.WithCatalog(new[] {
-				// Roslyn formatter bug: https://roslyn.codeplex.com/workitem/382
-				// IWaitIndicator is internal, so I have no choice but to use the existing
-				// implementation. The rest of Microsoft.VisualStudio.LanguageServices.dll
-				// exports lots of VS interop types that I don't want.
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.Utilities.VisualStudioWaitIndicator, "
-						   + "Microsoft.VisualStudio.LanguageServices"),
-				// Enables rename (but breaks F12).
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.VisualStudioDocumentNavigationServiceFactory, "
-						   + "Microsoft.VisualStudio.LanguageServices"),
-				// Provides error messages in quick fix previews.  This is in the VS layer
-				// only because it uses VS icons, so I can use it as-is.
-				// Removed in VS2015 Preview
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.CodeFixPreview.CodeFixPreviewService, "
-						   + "Microsoft.VisualStudio.LanguageServices"),
-				// VS2015 Preview version of above type.
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.PreviewPane.PreviewPaneService, "
-						   + "Microsoft.VisualStudio.LanguageServices"),
-				// Necessary (together with ugly Reflection) to use WorkCoordinator.HighPriorityProcessor.
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.VisualStudioDocumentTrackingServiceFactory, "
-						   + "Microsoft.VisualStudio.LanguageServices"),
-				}.Where(t => t != null));
-
-		}
-
-		///<summary>Creates a builder prepopulated with the editor and Roslyn catalogs.</summary>
-		public static VsMefContainerBuilder CreateDefault()
-		{
-			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
-				// Needed for ExportMetadataViewInterfaceEmitProxy to support editor metadata types.
-				.WithFilteredCatalogs(Assembly.Load("Microsoft.VisualStudio.Composition.Configuration"));
-			
-			return containerBuilder.WithEditorCatalogs().WithRoslynCatalogs();
-		}
-
-		///<summary>Creates a new builder, including catalogs for the core editor services.</summary>
-		public VsMefContainerBuilder WithEditorCatalogs()
-		{
-			return WithFilteredCatalogs(EditorComponents.Select(c => Assembly.Load(c + VsFullNameSuffix)))
-				  .WithFilteredCatalogs(UndoComponents.Select(n=>Assembly.Load(n)))
-				  .WithFilteredCatalogs(typeof(VsMefContainerBuilder).Assembly);
 		}
 
 		class ComponentModel : IComponentModel
