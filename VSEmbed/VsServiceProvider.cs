@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using VSEmbed.Services;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
 using Shell = Microsoft.VisualStudio.Shell;
+using System.Linq;
 
 namespace VSEmbed
 {
@@ -39,13 +40,7 @@ namespace VSEmbed
 			if (Shell.ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsManager)) != null)
 				return;
 
-			// If the App() ctor didn't set a version, we're in the designer
-			// The designer pre-loads our referenced assemblies, so we can't
-			// use any other version.
-			if (VsLoader.VsVersion == null)
-				VsLoader.Load(new Version(11, 0, 0, 0));
-
-			var esm = ExternalSettingsManager.CreateForApplication(Path.Combine(VsLoader.InstallationDirectory, "devenv.exe"));
+			var esm = ExternalSettingsManager.CreateForApplication(InstallationPath);
 			var sp = new VsServiceProvider
 			{
 				serviceInstances = {
@@ -151,5 +146,20 @@ namespace VSEmbed
 			serviceInstances.TryGetValue(serviceType.GUID, out result);
 			return result;
 		}
+
+
+		const string basePath = @"C:\Program Files (x86)\Microsoft Visual Studio";
+		const string vsFileName = "devenv.exe";
+		/// <summary>Gets a path to a Visual Studio 2015 installation.</summary>
+		/// TODO: currently hard coded path to dev14. dev15 doesn't have certain settings that dev14 dlls expect
+		private static string InstallationPath => @"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe"; /*
+		{
+			get
+			{
+				var directories = Directory.GetDirectories(basePath).OrderBy(n => n.Length);
+				var path = directories.Select(d => Directory.GetFiles(d, vsFileName, SearchOption.AllDirectories).FirstOrDefault()).First();
+				return path;
+			}
+		}*/
 	}
 }

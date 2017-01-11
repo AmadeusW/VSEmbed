@@ -97,7 +97,7 @@ namespace VSEmbed.Services
 			switch ((VSAPropID)propid) {
 				// These values are used by VsImageService.InitializeLibrary
 				case VSAPropID.LocalAppDataDir:		// This is used to cache images
-					pvar = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VSEmbed", VsLoader.VsVersion.ToString(2));
+					pvar = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VSEmbed");
 					return 0;
 				case VSAPropID.ConfigurationTimestampUtc:
 					// The cache will be deleted if its modification time is less than this value.

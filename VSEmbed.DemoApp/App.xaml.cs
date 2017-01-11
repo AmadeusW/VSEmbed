@@ -8,7 +8,6 @@ namespace VSEmbed.DemoApp
 	/// </summary>
 	public partial class App : Application {
 		public App() {
-			VsLoader.Load(new Version(14, 0, 0, 0));
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
 		}

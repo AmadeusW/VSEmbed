@@ -144,7 +144,6 @@
     <Compile Include="Services\Simple Services.cs" />
     <Compile Include="Services\Stub Services.cs" />
     <Compile Include="TextViewExtensions.cs" />
-    <Compile Include="VsLoader.cs" />
     <Compile Include="VsMefContainerBuilder.cs" />
     <Compile Include="VsServiceProvider.cs" />
   </ItemGroup>
