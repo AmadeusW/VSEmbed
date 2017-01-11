@@ -45,7 +45,6 @@ namespace VSEmbed
 
 			VsVersion = vsVersion;
 			InstallationDirectory = GetInstallationDirectory(VsVersion);
-			TryLoadInteropAssembly(InstallationDirectory);
 		}
 
 		///<summary>Gets the version of Visual Studio that will be loaded.  This cannot be changed, because the CLR caches assembly loads.</summary>
@@ -53,8 +52,6 @@ namespace VSEmbed
 
 		///<summary>Gets the installation directory for the loaded VS version.</summary>
 		public static string InstallationDirectory { get; private set; }
-
-		static readonly Regex versionMatcher = new Regex(@"(?<=\.)\d+\.0$");
 
 		///<summary>Gets the directory containing Roslyn assemblies, or null if this VS version does not contain Roslyn.</summary>
 		public static string RoslynAssemblyPath
@@ -65,55 +62,6 @@ namespace VSEmbed
 				if (VsVersion.Major == 14)
 					return Path.Combine(InstallationDirectory, "PrivateAssemblies");
 				return null;    // TODO: Predict GAC / versioning for Dev15
-			}
-		}
-
-		static readonly string[] RoslynAssemblyPrefixes = {
-			"Microsoft.CodeAnalysis",
-			"Roslyn.",  // For package assemblies like Roslyn.VisualStudio.Setup
-			"System.Reflection.Metadata",
-			"System.Collections.Immutable",
-			"Microsoft.VisualStudio.LanguageServices",
-			"Esent.Interop",
-			"System.Composition.AttributedModel",		// New to VS2015 Preview
-			"Microsoft.VisualStudio.Composition"		// For VS MEF in VS2015 Preview
-		};
-
-		/// <summary>
-		/// The interop assembly isn't included in the GAC and it doesn't offer any MEF components (it's
-		/// just a simple COM interop library).  Hence it needs to be loaded a bit specially.  Just find
-		/// the assembly on disk and hook into the resolve event.
-		/// Copied from @JaredPar's EditorUtils.
-		/// </summary>
-		private static bool TryLoadInteropAssembly(string installDirectory)
-		{
-			const string interopName = "Microsoft.VisualStudio.Platform.VSEditor.Interop";
-			const string interopNameWithExtension = interopName + ".dll";
-			var interopAssemblyPath = Path.Combine(installDirectory, "PrivateAssemblies");
-			interopAssemblyPath = Path.Combine(interopAssemblyPath, interopNameWithExtension);
-			try
-			{
-				var interopAssembly = Assembly.LoadFile(interopAssemblyPath);
-				if (interopAssembly == null)
-				{
-					return false;
-				}
-
-				var comparer = StringComparer.OrdinalIgnoreCase;
-				AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
-				{
-					if (comparer.Equals(e.Name, interopAssembly.FullName))
-					{
-						return interopAssembly;
-					}
-					return null;
-				};
-
-				return true;
-			}
-			catch
-			{
-				return false;
 			}
 		}
 	}
