@@ -149,7 +149,7 @@ namespace VSEmbed
 		const string vsFileName = "devenv.exe";
 		/// <summary>Gets a path to a Visual Studio 2015 installation.</summary>
 		/// TODO: currently hard coded path to dev14. dev15 doesn't have certain settings that dev14 dlls expect
-		private static string InstallationPath => @"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe"; /*
+		private static string InstallationPath /*=> @"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe"; */
 		{
 			get
 			{
@@ -157,6 +157,6 @@ namespace VSEmbed
 				var path = directories.Select(d => Directory.GetFiles(d, vsFileName, SearchOption.AllDirectories).FirstOrDefault()).First();
 				return path;
 			}
-		}*/
+		}
 	}
 }
