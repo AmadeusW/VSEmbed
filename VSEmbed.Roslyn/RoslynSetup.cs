@@ -67,7 +67,7 @@ namespace VSEmbed.Roslyn {
 					"Microsoft.CodeAnalysis.VisualBasic.Features.dll",
 					"Microsoft.CodeAnalysis.VisualBasic.EditorFeatures.dll",
 				}.Select(name => new AnalyzerFileReference(
-					Path.Combine(VsLoader.RoslynAssemblyPath, name),
+					Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name),
 					new AnalyzerLoader()
 				))
 				 .ToImmutableDictionary<AnalyzerReference, object>(a => a.Id));
