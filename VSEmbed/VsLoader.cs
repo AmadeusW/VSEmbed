@@ -14,32 +14,6 @@ namespace VSEmbed
 	///<remarks>This class must be initialized before anything else is JITted.</remarks>
 	public static class VsLoader
 	{
-		///<summary>Finds all installed Visual Studio versions.</summary>
-		public static IEnumerable<Version> FindAllVersions()
-		{
-			// Grab every version of every SKU, sorted by SKU priority
-			// Then, filter out duplicate versions in later SKUs only.
-			return SkuKeyNames
-				.SelectMany(GetSkuVersions)
-				.Distinct()
-				.OrderBy(d => d);
-		}
-
-		private static IEnumerable<Version> GetSkuVersions(string sku)
-		{
-			using (var software = Registry.LocalMachine.OpenSubKey("SOFTWARE"))
-			using (var ms = software.OpenSubKey("Microsoft"))
-			using (var vs = ms.OpenSubKey(sku))
-				return vs == null ? new Version[0] : vs.GetSubKeyNames()
-						.Select(s =>
-						{
-							Version v;
-							Version.TryParse(s, out v);
-							return v;
-						})
-						.Where(d => d != null);
-		}
-
 		/// <summary>
 		/// A list of key names for versions of Visual Studio which have the editor components 
 		/// necessary to create an EditorHost instance.  Listed in preference order.
@@ -61,12 +35,6 @@ namespace VSEmbed
 			).FirstOrDefault(p => p != null);
 		}
 
-		///<summary>Initializes the assembly loader with the latest installed version of Visual Studio.</summary>
-		public static void LoadLatest()
-		{
-			Load(FindAllVersions().Last());
-		}
-
 		///<summary>Initializes the assembly loader with the specified version of Visual Studio.</summary>
 		public static void Load(Version vsVersion)
 		{
@@ -78,9 +46,6 @@ namespace VSEmbed
 			VsVersion = vsVersion;
 			InstallationDirectory = GetInstallationDirectory(VsVersion);
 			TryLoadInteropAssembly(InstallationDirectory);
-
-			//if (RoslynAssemblyPath != null)
-			//	AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve_Roslyn;
 		}
 
 		///<summary>Gets the version of Visual Studio that will be loaded.  This cannot be changed, because the CLR caches assembly loads.</summary>
@@ -113,21 +78,6 @@ namespace VSEmbed
 			"System.Composition.AttributedModel",		// New to VS2015 Preview
 			"Microsoft.VisualStudio.Composition"		// For VS MEF in VS2015 Preview
 		};
-
-		static Assembly CurrentDomain_AssemblyResolve_Roslyn(object sender, ResolveEventArgs args)
-		{
-			if (!RoslynAssemblyPrefixes.Any(args.Name.StartsWith))
-				return null;
-
-			Debug.WriteLine("Redirecting load of " + args.Name + ",\tfrom " + (args.RequestingAssembly == null ? "(unknown)" : args.RequestingAssembly.FullName));
-
-			var name = new AssemblyName(args.Name);
-			var dllPath = Path.Combine(RoslynAssemblyPath, name.Name + ".dll");
-			if (File.Exists(dllPath))
-				return Assembly.LoadFile(dllPath);
-			else
-				return null;
-		}
 
 		/// <summary>
 		/// The interop assembly isn't included in the GAC and it doesn't offer any MEF components (it's
