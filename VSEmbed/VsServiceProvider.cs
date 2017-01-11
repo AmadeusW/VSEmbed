@@ -50,9 +50,6 @@ namespace VSEmbed
 					// Used by ColorThemeService
 					{ typeof(SVsSettingsManager).GUID, new SettingsManagerWrapper(esm) },
 
-					// Used by Shell.VsResourceKeys
-					{ new Guid("45652379-D0E3-4EA0-8B60-F2579AA29C93"), new SimpleVsWindowManager() },
-
 					// Used by KnownUIContexts
 					{ typeof(IVsMonitorSelection).GUID, new StubVsMonitorSelection() },
 
