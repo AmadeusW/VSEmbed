@@ -52,17 +52,5 @@ namespace VSEmbed
 
 		///<summary>Gets the installation directory for the loaded VS version.</summary>
 		public static string InstallationDirectory { get; private set; }
-
-		///<summary>Gets the directory containing Roslyn assemblies, or null if this VS version does not contain Roslyn.</summary>
-		public static string RoslynAssemblyPath
-		{
-			get
-			{
-				// TODO: Use Roslyn Preview in Dev12?
-				if (VsVersion.Major == 14)
-					return Path.Combine(InstallationDirectory, "PrivateAssemblies");
-				return null;    // TODO: Predict GAC / versioning for Dev15
-			}
-		}
 	}
 }
