@@ -92,6 +92,9 @@
     <Reference Include="Microsoft.VisualStudio.LanguageServices, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.LanguageServices.1.3.2\lib\net46\Microsoft.VisualStudio.LanguageServices.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.LanguageServices.CSharp">
+      <HintPath>..\lib\Microsoft.VisualStudio.LanguageServices.CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.LanguageServices.Implementation">
       <HintPath>..\lib\Microsoft.VisualStudio.LanguageServices.Implementation.dll</HintPath>
     </Reference>
