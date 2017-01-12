@@ -45,7 +45,6 @@ namespace VSEmbed.Roslyn
 				CreateInstanceNonPublic(languageServiceType, Activator.CreateInstance(packageType, true)),	// languageService
 				wpfTextView,										// wpfTextView
 				mef.DefaultExportProvider.GetExport<object>("Microsoft.CodeAnalysis.Editor.ICommandHandlerServiceFactory").Value,			// commandHandlerServiceFactory
-				null,												// featureOptionsService (not used)
 				mef.GetService<IVsEditorAdaptersFactoryService>()	// editorAdaptersFactoryService
 			);
 
