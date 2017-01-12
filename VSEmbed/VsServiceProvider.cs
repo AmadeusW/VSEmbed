@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias Immutable;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Primitives;
@@ -9,11 +10,11 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using VSEmbed.Services;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
-using Shell = Microsoft.VisualStudio.Shell;
+using Immutable::Microsoft.VisualStudio.Shell;
+using Shell15 = Microsoft.VisualStudio.Shell;
 using System.Linq;
 
 namespace VSEmbed
@@ -37,7 +38,7 @@ namespace VSEmbed
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "These objects become global and must not be disposed yet")]
 		public static void Initialize() {
 			// If we're in a real VS process, or if we already initialized, do nothing.
-			if (Shell.ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsManager)) != null)
+			if (Shell15.ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsManager)) != null)
 				return;
 
 			var esm = ExternalSettingsManager.CreateForApplication(InstallationPath);
@@ -61,7 +62,7 @@ namespace VSEmbed
 					{ typeof(SVsThreadedWaitDialogFactory).GUID, new BaseWaitDialogFactory() },
 
 					// Used by Dev14's VsImageLoader, which is needed for Roslyn IntelliSense
-					{ typeof(SVsAppId).GUID, new SimpleVsAppId() },
+					{ typeof(Shell15.SVsAppId).GUID, new SimpleVsAppId() },
 
 					// Used by KeyBindingHelper.GetKeyBinding, which is used by VSLightBulbPresenterStyle.
 					{ typeof(SDTE).GUID, new StubDTE() },
@@ -72,7 +73,7 @@ namespace VSEmbed
 				}
 			};
 
-			Shell.ServiceProvider.CreateFromSetSite(sp);
+			Shell15.ServiceProvider.CreateFromSetSite(sp);
 			Instance = sp;
 
 			// Add services that use IServiceProvider here
