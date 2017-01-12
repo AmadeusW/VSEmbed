@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using VSEmbed;
 
 namespace PerformanceTests
 {
@@ -33,21 +34,20 @@ namespace PerformanceTests
 
 			var summary = BenchmarkRunner.Run<BasicTypingTest>();
 
-			//var thread = new Thread(() =>
-			//{
-			//	VsLoader.Load(new Version(14, 0, 0, 0));
-			//	VsServiceProvider.Initialize();
-			//	VsMefContainerBuilder.CreateDefault().Build();
+			var thread = new Thread(() =>
+			{
+				VsServiceProvider.Initialize();
+				VsMefContainerBuilder.CreateDefault().Build();
 
-			//	//Can we please not have to do this?
+				//Can we please not have to do this?
 			//	initializeRoslynForegroundThreadDataObject();
-			//	var window = new VSEmbed.DemoApp.MainWindow();
-			//	new WpfApplication(window).Run();
-			//});
+				var window = new VSEmbed.DemoApp.MainWindow();
+				new WpfApplication(window).Run();
+			});
 
-			//thread.SetApartmentState(ApartmentState.STA);
-			//thread.Start();
-			//thread.Join();
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
+			thread.Join();
 		}
 		private class WpfApplication : Application
 		{

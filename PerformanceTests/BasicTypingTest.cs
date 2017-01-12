@@ -13,7 +13,6 @@ namespace PerformanceTests
 		private MainWindow _window;
 		static BasicTypingTest()
 		{
-			VsLoader.Load(new Version(14, 0, 0, 0));
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
 		}
