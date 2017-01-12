@@ -35,11 +35,9 @@ namespace VSEmbed.Roslyn
 															  + "Microsoft.VisualStudio.LanguageServices.CSharp");
 		// The generic parameters aren't actually used, so there is nothing wrong with always using C#.
 		// The methods I call are on the non-generic abstract base class anyway.
-		static readonly Type oleCommandTargetType = Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.StandaloneCommandFilter`3, "
+		static readonly Type oleCommandTargetType = Type.GetType("Microsoft.VisualStudio.LanguageServices.Implementation.StandaloneCommandFilter`2, "
 															   + "Microsoft.VisualStudio.LanguageServices")
-			.MakeGenericType(packageType, languageServiceType,
-				Type.GetType("Microsoft.VisualStudio.LanguageServices.CSharp.ProjectSystemShim.CSharpProjectShim, Microsoft.VisualStudio.LanguageServices.CSharp")
-			);
+			.MakeGenericType(packageType, languageServiceType);
 
 		public RoslynKeyProcessor(IWpfTextView wpfTextView, IComponentModel mef) {
 			this.wpfTextView = wpfTextView;
