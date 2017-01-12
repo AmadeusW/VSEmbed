@@ -32,7 +32,7 @@ namespace PerformanceTests
 			//x.Setup();
 			//x.BasicTypingPerf();
 
-			var summary = BenchmarkRunner.Run<BasicTypingTest>();
+			//var summary = BenchmarkRunner.Run<BasicTypingTest>();
 
 			var thread = new Thread(() =>
 			{
@@ -40,7 +40,7 @@ namespace PerformanceTests
 				VsMefContainerBuilder.CreateDefault().Build();
 
 				//Can we please not have to do this?
-			//	initializeRoslynForegroundThreadDataObject();
+				initializeRoslynForegroundThreadDataObject();
 				var window = new VSEmbed.DemoApp.MainWindow();
 				new WpfApplication(window).Run();
 			});
