@@ -9,16 +9,30 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// DiagnosticRunner runs benchmark code in the UI context
+			//UITest();
+			Benchmark();
+		}
+
+		/// <summary>
+		/// BenchmarkRunner runs the benchmark. Run it in Release configuration!
+		/// </summary>
+		private static void Benchmark()
+		{
+			var summary = BenchmarkRunner.Run<BasicTyping>();
+			Console.ReadLine();
+		}
+
+		/// <summary>
+		/// DiagnosticRunner runs benchmark code in the UI context
+		/// </summary>
+		private static void UITest()
+		{
 			var test = new BasicTyping()
 			{
 				CurrentContentType = ContentType.CSharp
 			};
+			// DiagnosticRunner runs benchmark code in the UI context
 			DiagnosticApplication.Run(test, test.BasicTypingPerf);
-
-			// BenchmarkRunner runs the benchmark. Run it in Release configuration!
-			//var summary = BenchmarkRunner.Run<BasicTyping>();
-			//Console.ReadLine();
 		}
 	}
 }
