@@ -1,4 +1,6 @@
 ﻿using System;
+using PerformanceTests.Runners;
+using PerformanceTests.Tests;
 using BenchmarkDotNet.Running;
 
 namespace PerformanceTests
@@ -9,13 +11,13 @@ namespace PerformanceTests
 		static void Main(string[] args)
 		{
 			// SimpleRunner just shows the window with the editor
-			//SimpleRunner.Run();
+			SimpleRunner.Run();
 
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticRunner.Run<BasicTypingTest>(nameof(BasicTypingTest.BasicTypingPerf));
+			//DiagnosticRunner.Run<BasicTyping>(nameof(BasicTyping.BasicTypingPerf));
 
 			// BenchmarkRunner runs the benchmark. Run it in Release configuration!
-			//var summary = BenchmarkRunner.Run<BasicTypingTest>();
+			//var summary = BenchmarkRunner.Run<BasicTyping>();
 			//Console.ReadLine();
 		}
 	}

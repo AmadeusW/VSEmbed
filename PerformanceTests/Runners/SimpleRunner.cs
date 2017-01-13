@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Windows;
+using PerformanceTests.Tests;
 
-namespace PerformanceTests
+namespace PerformanceTests.Runners
 {
 	/// <summary>
 	/// Shows a window with the VS editor.
@@ -16,7 +17,8 @@ namespace PerformanceTests
 		{
 			var thread = new Thread(() =>
 			{
-				var test = new BasicTypingTest() as IDebuggableTest;
+				// We need to create an instance of TestBase to initialize MEF and language service
+				var test = new BasicTyping() as IDebuggableTest;
 				test.AttachToHost(null);
 				new WpfApplication().Run();
 			});

@@ -7,7 +7,7 @@ using BenchmarkDotNet.Attributes;
 using System.Reflection;
 using VSEmbed.Contracts;
 
-namespace PerformanceTests
+namespace PerformanceTests.Runners
 {
 	/// <summary>
 	/// Creates a window with the VS editor and runs benchmark code.

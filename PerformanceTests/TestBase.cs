@@ -1,17 +1,25 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using VSEmbed;
 using VSEmbed.Contracts;
 
 namespace PerformanceTests
 {
-	public class BasicTypingTest : IDebuggableTest
+	public enum ContentType { text, CSharp }
+
+	public abstract class TestBase : IDebuggableTest
 	{
-		private IEmbeddedTextViewHost _window;
-		static BasicTypingTest()
+		protected IEmbeddedTextViewHost Host { get; private set; }
+		
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
+		static TestBase()
 		{
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
@@ -28,45 +36,26 @@ namespace PerformanceTests
 			var t_foregroundThreadAffinitizedObject = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadAffinitizedObject");
 			var m_currentForegroundThreadData = t_foregroundThreadAffinitizedObject.GetProperty("CurrentForegroundThreadData", BindingFlags.Static | BindingFlags.NonPublic);
 			m_currentForegroundThreadData.SetValue(null, result);
-		}
-
-		public enum ContentType { text, CSharp}
-		[Params(ContentType.text, ContentType.CSharp)]
-		public ContentType CurrentContentType { get; set; }
+		}	
 
 		[Setup]
 		public void Setup()
 		{
-			_window = new VSEmbed.DemoApp.MainWindow();
-			_window.Show();
-			_window.SetContentType(CurrentContentType.ToString());
+			Host = new VSEmbed.DemoApp.MainWindow();
+			Host.Show();
+			Host.SetContentType(CurrentContentType.ToString());
 		}
 
 		[Cleanup]
 		public void Cleanup()
 		{
-			_window.Close();
-			_window = null;
-		}
-
-		[Benchmark, STAThread]
-		public void BasicTypingPerf()
-		{
-			_window.SendKeystrokes("namespace");
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
-			_window.SendKey(System.Windows.Input.Key.Back);
+			Host.Close();
+			Host = null;
 		}
 
 		void IDebuggableTest.AttachToHost(IEmbeddedTextViewHost host)
 		{
-			_window = host;
+			Host = host;
 		}
 	}
 }
