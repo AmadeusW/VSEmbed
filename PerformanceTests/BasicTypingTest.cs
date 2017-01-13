@@ -8,7 +8,7 @@ using VSEmbed.DemoApp;
 
 namespace PerformanceTests
 {
-	public class BasicTypingTest
+	public class BasicTypingTest : IDebuggableTest
 	{
 		private MainWindow _window;
 		static BasicTypingTest()
@@ -39,7 +39,6 @@ namespace PerformanceTests
 		[Setup]
 		public void Setup()
 		{
-			//Can we please not have to do this?
 			initializeRoslynForegroundThreadDataObject();
 			_window = new MainWindow();
 			_window.Show();
@@ -66,6 +65,11 @@ namespace PerformanceTests
 			_window.SendKey(System.Windows.Input.Key.Back);
 			_window.SendKey(System.Windows.Input.Key.Back);
 			_window.SendKey(System.Windows.Input.Key.Back);
+		}
+
+		void IDebuggableTest.Setup()
+		{
+			initializeRoslynForegroundThreadDataObject();
 		}
 	}
 }
