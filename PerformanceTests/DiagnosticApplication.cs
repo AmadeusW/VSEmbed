@@ -5,7 +5,6 @@ using System.Windows;
 using VSEmbed;
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
-using VSEmbed.Contracts;
 using PerformanceTests.Tests;
 
 namespace PerformanceTests
@@ -15,7 +14,7 @@ namespace PerformanceTests
 	/// </summary>
 	internal class DiagnosticApplication : Application
 	{
-		private readonly IEmbeddedTextViewHost _mainWindow;
+		private readonly VSEmbed.DemoApp.EditorWindow _mainWindow;
 		private readonly TestBase _testClass;
 		private readonly Action _testMethod;
 
@@ -37,7 +36,7 @@ namespace PerformanceTests
 		{
 			this._testClass = testClass;
 			this._testMethod = testMethod;
-			_mainWindow = new VSEmbed.DemoApp.MainWindow();
+			_mainWindow = new VSEmbed.DemoApp.EditorWindow();
 			_testClass.AttachToHost(_mainWindow);
 		}
 

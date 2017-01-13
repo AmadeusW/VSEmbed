@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VSEmbed;
-using VSEmbed.Contracts;
 
 namespace PerformanceTests
 {
@@ -14,7 +13,7 @@ namespace PerformanceTests
 
 	public abstract class TestBase
 	{
-		protected IEmbeddedTextViewHost Host { get; private set; }
+		protected VSEmbed.DemoApp.EditorWindow Host { get; private set; }
 		
 		[Params(ContentType.text, ContentType.CSharp)]
 		public ContentType CurrentContentType { get; set; }
@@ -41,7 +40,7 @@ namespace PerformanceTests
 		[Setup]
 		public void Setup()
 		{
-			Host = new VSEmbed.DemoApp.MainWindow();
+			Host = new VSEmbed.DemoApp.EditorWindow();
 			Host.Show();
 			Host.SetContentType(CurrentContentType.ToString());
 		}
@@ -60,7 +59,7 @@ namespace PerformanceTests
 		/// Benchmark needs to use the Setup method.
 		/// </summary>
 		/// <param name="host"></param>
-		internal void AttachToHost(IEmbeddedTextViewHost host)
+		internal void AttachToHost(VSEmbed.DemoApp.EditorWindow host)
 		{
 			Host = host;
 			Host.SetContentType(CurrentContentType.ToString());
