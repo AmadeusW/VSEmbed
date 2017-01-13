@@ -22,10 +22,10 @@ namespace PerformanceTests
 		{
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
-			InitializeRoslynForegroundThreadDataObject();
+			initializeRoslynForegroundThreadDataObject();
 		}
 
-		private static void InitializeRoslynForegroundThreadDataObject()
+		private static void initializeRoslynForegroundThreadDataObject()
 		{
 			var assembly = Assembly.Load("Microsoft.CodeAnalysis.EditorFeatures");
 			var t_foregroundThreadData = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadData");
