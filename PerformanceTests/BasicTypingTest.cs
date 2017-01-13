@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using VSEmbed;
-using VSEmbed.DemoApp;
+using VSEmbed.Contracts;
 
 namespace PerformanceTests
 {
 	public class BasicTypingTest : IDebuggableTest
 	{
-		private MainWindow _window;
+		private IEmbeddedTextViewHost _window;
 		static BasicTypingTest()
 		{
 			VsServiceProvider.Initialize();
@@ -40,7 +40,7 @@ namespace PerformanceTests
 		public void Setup()
 		{
 			initializeRoslynForegroundThreadDataObject();
-			_window = new MainWindow();
+			_window = new VSEmbed.DemoApp.MainWindow();
 			_window.Show();
 			_window.SetContentType(CurrentContentType.ToString());
 		}
@@ -70,6 +70,11 @@ namespace PerformanceTests
 		void IDebuggableTest.Setup()
 		{
 			initializeRoslynForegroundThreadDataObject();
+		}
+
+		void IDebuggableTest.AttachToHost(IEmbeddedTextViewHost host)
+		{
+			_window = host;
 		}
 	}
 }

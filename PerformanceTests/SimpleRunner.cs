@@ -4,6 +4,9 @@ using System.Windows;
 
 namespace PerformanceTests
 {
+	/// <summary>
+	/// Shows the window with the editor
+	/// </summary>
 	internal class SimpleRunner
 	{
 		internal static void Run()
@@ -12,6 +15,7 @@ namespace PerformanceTests
 			{
 				var test = new BasicTypingTest() as IDebuggableTest;
 				test.Setup();
+				test.AttachToHost(null);
 				new WpfApplication().Run();
 			});
 

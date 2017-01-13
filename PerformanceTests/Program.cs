@@ -8,13 +8,15 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-#if true
-			//DiagnosticRunner.Run<BasicTypingTest>(nameof(BasicTypingTest.BasicTypingPerf));
+			// SimpleRunner just shows the window with the editor
 			SimpleRunner.Run();
-#else
-			var summary = BenchmarkRunner.Run<BasicTypingTest>();
-			Console.ReadLine();
-#endif
+
+			// DiagnosticRunner runs benchmark code in the UI context
+			//DiagnosticRunner.Run<BasicTypingTest>(nameof(BasicTypingTest.BasicTypingPerf));
+
+			// BenchmarkRunner runs the benchmark
+			//var summary = BenchmarkRunner.Run<BasicTypingTest>();
+			//Console.ReadLine();
 		}
 	}
 }

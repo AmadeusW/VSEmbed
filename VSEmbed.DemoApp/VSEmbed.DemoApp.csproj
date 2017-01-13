@@ -363,6 +363,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VSEmbed.Contracts\VSEmbed.Contracts.csproj">
+      <Project>{984E01B0-4F64-4617-ADF4-C2907F96D2B9}</Project>
+      <Name>VSEmbed.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VSEmbed.Roslyn\VSEmbed.Roslyn.csproj">
       <Project>{102cb436-a268-4084-9d56-a2131763cc28}</Project>
       <Name>VSEmbed.Roslyn</Name>

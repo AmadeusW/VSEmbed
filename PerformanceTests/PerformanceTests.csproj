@@ -280,6 +280,7 @@
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -341,6 +342,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VSEmbed.Contracts\VSEmbed.Contracts.csproj">
+      <Project>{984E01B0-4F64-4617-ADF4-C2907F96D2B9}</Project>
+      <Name>VSEmbed.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VSEmbed.DemoApp\VSEmbed.DemoApp.csproj">
       <Project>{e50d3c83-0e7c-41c3-8b2d-35f84017e220}</Project>
       <Name>VSEmbed.DemoApp</Name>

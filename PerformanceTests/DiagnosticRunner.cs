@@ -5,9 +5,13 @@ using System.Windows;
 using VSEmbed;
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
+using VSEmbed.Contracts;
 
 namespace PerformanceTests
 {
+	/// <summary>
+	/// Runs benchmark code in the UI context
+	/// </summary>
 	internal class DiagnosticRunner
 	{
 		internal static void Run<T>(string testName) where T: IDebuggableTest
@@ -15,6 +19,7 @@ namespace PerformanceTests
 			var thread = new Thread(() =>
 			{
 				var testClass = (T)Activator.CreateInstance(typeof(T));
+				testClass.Setup();
 				var testMethods = typeof(T).GetMethods().Where(methodInfo => methodInfo.GetCustomAttributes(typeof(BenchmarkAttribute), true).Length > 0);
 				var testMethod = testMethods.Single(n => n.Name == testName);
 				new WpfApplication(testClass, testMethod).Run();
@@ -27,7 +32,7 @@ namespace PerformanceTests
 
 		private class WpfApplication : Application
 		{
-			private readonly VSEmbed.DemoApp.MainWindow _mainWindow;
+			private readonly IEmbeddedTextViewHost _mainWindow;
 			private readonly IDebuggableTest _testClass;
 			private readonly MethodInfo _testMethod;
 
@@ -36,14 +41,13 @@ namespace PerformanceTests
 				_testClass = testClass;
 				_testMethod = testMethod;
 				_mainWindow = new VSEmbed.DemoApp.MainWindow();
+				_testClass.AttachToHost(_mainWindow);
 			}
 
 			protected override void OnStartup(StartupEventArgs e)
 			{
 				_mainWindow.Show();
-				_testClass.Setup();
-				// TODO: allow SendKey with any window. Currently this won't work
-				//_testMethod.Invoke(_testClass, new object[0]);
+				_testMethod.Invoke(_testClass, new object[0]);
 			}
 		}
 	}
