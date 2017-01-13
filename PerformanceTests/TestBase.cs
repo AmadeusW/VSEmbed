@@ -26,7 +26,7 @@ namespace PerformanceTests
 			InitializeRoslynForegroundThreadDataObject();
 		}
 
-		internal static void InitializeRoslynForegroundThreadDataObject()
+		private static void InitializeRoslynForegroundThreadDataObject()
 		{
 			var assembly = Assembly.Load("Microsoft.CodeAnalysis.EditorFeatures");
 			var t_foregroundThreadData = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadData");
@@ -54,7 +54,9 @@ namespace PerformanceTests
 		}
 
 		/// <summary>
-		/// This method is used only in UI debugging of the test.
+		/// Sets up the host window. 
+		/// This method is used only in UI debugging of the test,
+		/// where we provide our own window.
 		/// Benchmark needs to use the Setup method.
 		/// </summary>
 		/// <param name="host"></param>
