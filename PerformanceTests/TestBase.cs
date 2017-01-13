@@ -12,7 +12,7 @@ namespace PerformanceTests
 {
 	public enum ContentType { text, CSharp }
 
-	public abstract class TestBase : IDebuggableTest
+	public abstract class TestBase
 	{
 		protected IEmbeddedTextViewHost Host { get; private set; }
 		
@@ -23,10 +23,10 @@ namespace PerformanceTests
 		{
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
-			initializeRoslynForegroundThreadDataObject();
+			InitializeRoslynForegroundThreadDataObject();
 		}
 
-		private static void initializeRoslynForegroundThreadDataObject()
+		internal static void InitializeRoslynForegroundThreadDataObject()
 		{
 			var assembly = Assembly.Load("Microsoft.CodeAnalysis.EditorFeatures");
 			var t_foregroundThreadData = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadData");
@@ -53,9 +53,15 @@ namespace PerformanceTests
 			Host = null;
 		}
 
-		void IDebuggableTest.AttachToHost(IEmbeddedTextViewHost host)
+		/// <summary>
+		/// This method is used only in UI debugging of the test.
+		/// Benchmark needs to use the Setup method.
+		/// </summary>
+		/// <param name="host"></param>
+		internal void AttachToHost(IEmbeddedTextViewHost host)
 		{
 			Host = host;
+			Host.SetContentType(CurrentContentType.ToString());
 		}
 	}
 }

@@ -13,11 +13,30 @@ namespace PerformanceTests.Tests
 			Host.SendKey(System.Windows.Input.Key.Back);
 			Host.SendKey(System.Windows.Input.Key.Back);
 			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);/*
 			Host.SendKey(System.Windows.Input.Key.Back);
 			Host.SendKey(System.Windows.Input.Key.Back);
 			Host.SendKey(System.Windows.Input.Key.Back);
-			Host.SendKey(System.Windows.Input.Key.Back);
-			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);*/
 		}
+		/*
+		[Benchmark, STAThread]
+		public void BasicTypingPerf()
+		{
+			Host.SendKeystrokes(@"namespace Namespace 
+{
+class Class
+{
+");
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+		}*/
 	}
 }

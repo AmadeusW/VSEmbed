@@ -1,5 +1,4 @@
 ﻿using System;
-using PerformanceTests.Runners;
 using PerformanceTests.Tests;
 using BenchmarkDotNet.Running;
 
@@ -10,11 +9,12 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// SimpleRunner just shows the window with the editor
-			SimpleRunner.Run();
-
 			// DiagnosticRunner runs benchmark code in the UI context
-			//DiagnosticRunner.Run<BasicTyping>(nameof(BasicTyping.BasicTypingPerf));
+			var test = new BasicTyping()
+			{
+				CurrentContentType = ContentType.CSharp
+			};
+			DiagnosticApplication.Run(test, test.BasicTypingPerf);
 
 			// BenchmarkRunner runs the benchmark. Run it in Release configuration!
 			//var summary = BenchmarkRunner.Run<BasicTyping>();
