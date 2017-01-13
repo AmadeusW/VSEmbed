@@ -28,6 +28,7 @@ namespace System.Windows.Input.Test
         private static readonly Dictionary<char, KeyPressInfo> printableChars = new Dictionary<char, KeyPressInfo> 
         { 
             {' ', new KeyPressInfo(Key.Space)},
+            {'\n', new KeyPressInfo(Key.Enter)},
             {',', new KeyPressInfo(Key.OemComma)},
             {'<', new KeyPressInfo(Key.OemComma, ModifierKeys.Shift)},
             {'.', new KeyPressInfo(Key.OemPeriod)},

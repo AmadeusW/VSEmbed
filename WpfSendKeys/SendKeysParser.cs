@@ -23,58 +23,7 @@ namespace System.Windows.Input.Test
 
             while (current < text.Length)
             {
-                if (CurrentChar == '{')
-                {
-                    ParseCurly();
-                    if (!insideParentheses && currentModifiers != ModifierKeys.None)
-                    {
-                        currentModifiers = ModifierKeys.None;
-                    }
-                }
-                else if (CurrentChar == '~')
-                {
-                    current++;
-                    Add(Key.Return);
-                    if (!insideParentheses && currentModifiers != ModifierKeys.None)
-                    {
-                        currentModifiers = ModifierKeys.None;
-                    }
-                }
-                else if (CurrentChar == '+')
-                {
-                    currentModifiers = currentModifiers | ModifierKeys.Shift;
-                    current++;
-                }
-                else if (CurrentChar == '^')
-                {
-                    currentModifiers = currentModifiers | ModifierKeys.Control;
-                    current++;
-                }
-                else if (CurrentChar == '%')
-                {
-                    currentModifiers = currentModifiers | ModifierKeys.Alt;
-                    current++;
-                }
-                else if (CurrentChar == '(')
-                {
-                    if (insideParentheses)
-                    {
-                        Error("Unbalanced parentheses: unexpected second (");
-                    }
-                    insideParentheses = true;
-                    current++;
-                }
-                else if (CurrentChar == ')')
-                {
-                    if (!insideParentheses)
-                    {
-                        Error("Unbalanced parentheses: unexpected closing )");
-                    }
-                    insideParentheses = false;
-                    currentModifiers = ModifierKeys.None;
-                    current++;
-                }
-                else if (IsPrintableChar())
+                if (IsPrintableChar())
                 {
                     ParseChar();
                     if (!insideParentheses && currentModifiers != ModifierKeys.None)
@@ -84,7 +33,10 @@ namespace System.Windows.Input.Test
                 }
                 else
                 {
-                    Error("Unexpected character: '" + CurrentChar + "'");
+					//TODO: HandleNewline here
+					ParseChar();
+
+                    //Error("Unexpected character: '" + CurrentChar + "'");
                 }
 
                 if (oldCurrent == current)
@@ -201,7 +153,7 @@ namespace System.Windows.Input.Test
 
             var ch = CurrentChar.ToString();
 
-            KeyPressInfo knownKeyPress = KeyboardLayout.Instance.GetKeyGestureForChar(ch[0]);
+            KeyPressInfo knownKeyPress = KeyboardLayout.Instance.GetKeyGestureForChar(CurrentChar);
             if (knownKeyPress != null)
             {
                 key = knownKeyPress.Key;
@@ -220,8 +172,9 @@ namespace System.Windows.Input.Test
             if (key != Key.None)
             {
                 Add(new KeyPressInfo(key, modifiers));
-                current++;
             }
+
+			current++;
         }
 
         private bool IsPrintableChar()
