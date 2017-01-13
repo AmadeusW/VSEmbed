@@ -10,7 +10,6 @@ namespace PerformanceTests
 {
 	interface IDebuggableTest
 	{
-		void Setup();
 		void AttachToHost(IEmbeddedTextViewHost host);
 	}
 }

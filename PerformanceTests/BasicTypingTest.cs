@@ -15,19 +15,17 @@ namespace PerformanceTests
 		{
 			VsServiceProvider.Initialize();
 			VsMefContainerBuilder.CreateDefault().Build();
+			initializeRoslynForegroundThreadDataObject();
 		}
 
 		private static void initializeRoslynForegroundThreadDataObject()
 		{
-			var currentThread = Thread.CurrentThread;
 			var assembly = Assembly.Load("Microsoft.CodeAnalysis.EditorFeatures");
 			var t_foregroundThreadData = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadData");
 			var m_createDefault = t_foregroundThreadData.GetMethod("CreateDefault", BindingFlags.Static | BindingFlags.NonPublic);
 			int foregroundThreadDataKind = 4;
 			var result = m_createDefault.Invoke(null, new object[] { foregroundThreadDataKind });
 			var t_foregroundThreadAffinitizedObject = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadAffinitizedObject");
-			var props = t_foregroundThreadAffinitizedObject.GetProperties().ToList();
-			var methods = t_foregroundThreadAffinitizedObject.GetMethods();
 			var m_currentForegroundThreadData = t_foregroundThreadAffinitizedObject.GetProperty("CurrentForegroundThreadData", BindingFlags.Static | BindingFlags.NonPublic);
 			m_currentForegroundThreadData.SetValue(null, result);
 		}
@@ -39,7 +37,6 @@ namespace PerformanceTests
 		[Setup]
 		public void Setup()
 		{
-			initializeRoslynForegroundThreadDataObject();
 			_window = new VSEmbed.DemoApp.MainWindow();
 			_window.Show();
 			_window.SetContentType(CurrentContentType.ToString());
@@ -65,11 +62,6 @@ namespace PerformanceTests
 			_window.SendKey(System.Windows.Input.Key.Back);
 			_window.SendKey(System.Windows.Input.Key.Back);
 			_window.SendKey(System.Windows.Input.Key.Back);
-		}
-
-		void IDebuggableTest.Setup()
-		{
-			initializeRoslynForegroundThreadDataObject();
 		}
 
 		void IDebuggableTest.AttachToHost(IEmbeddedTextViewHost host)

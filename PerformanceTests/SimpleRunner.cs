@@ -5,16 +5,18 @@ using System.Windows;
 namespace PerformanceTests
 {
 	/// <summary>
-	/// Shows the window with the editor
+	/// Shows a window with the VS editor.
 	/// </summary>
 	internal class SimpleRunner
 	{
+		/// <summary>
+		/// Shows a window with the VS editor.
+		/// </summary>
 		internal static void Run()
 		{
 			var thread = new Thread(() =>
 			{
 				var test = new BasicTypingTest() as IDebuggableTest;
-				test.Setup();
 				test.AttachToHost(null);
 				new WpfApplication().Run();
 			});

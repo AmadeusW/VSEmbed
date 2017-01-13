@@ -10,16 +10,20 @@ using VSEmbed.Contracts;
 namespace PerformanceTests
 {
 	/// <summary>
-	/// Runs benchmark code in the UI context
+	/// Creates a window with the VS editor and runs benchmark code.
 	/// </summary>
 	internal class DiagnosticRunner
 	{
+		/// <summary>
+		/// Runs a specific benchmark method and displays its execution in the UI
+		/// </summary>
+		/// <typeparam name="T">Benchmark test type</typeparam>
+		/// <param name="testName">Name of the benchmark method to run</param>
 		internal static void Run<T>(string testName) where T: IDebuggableTest
 		{
 			var thread = new Thread(() =>
 			{
 				var testClass = (T)Activator.CreateInstance(typeof(T));
-				testClass.Setup();
 				var testMethods = typeof(T).GetMethods().Where(methodInfo => methodInfo.GetCustomAttributes(typeof(BenchmarkAttribute), true).Length > 0);
 				var testMethod = testMethods.Single(n => n.Name == testName);
 				new WpfApplication(testClass, testMethod).Run();
