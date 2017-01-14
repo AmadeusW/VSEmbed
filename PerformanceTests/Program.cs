@@ -1,68 +1,38 @@
-﻿using BenchmarkDotNet.Running;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Windows;
-using VSEmbed;
+﻿using System;
+using PerformanceTests.Tests;
+using BenchmarkDotNet.Running;
 
 namespace PerformanceTests
 {
 	class Program
 	{
-		private static void initializeRoslynForegroundThreadDataObject()
-		{
-			var currentThread = Thread.CurrentThread;
-			var assembly = Assembly.Load("Microsoft.CodeAnalysis.EditorFeatures");
-			var t_foregroundThreadData = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadData");
-			var m_createDefault = t_foregroundThreadData.GetMethod("CreateDefault", BindingFlags.Static | BindingFlags.NonPublic);
-			int foregroundThreadDataKind = 4;
-			var result = m_createDefault.Invoke(null, new object[] { foregroundThreadDataKind });
-			var t_foregroundThreadAffinitizedObject = assembly.GetType("Microsoft.CodeAnalysis.Editor.Shared.Utilities.ForegroundThreadAffinitizedObject");
-			var props = t_foregroundThreadAffinitizedObject.GetProperties().ToList();
-			var methods = t_foregroundThreadAffinitizedObject.GetMethods();
-			var m_currentForegroundThreadData = t_foregroundThreadAffinitizedObject.GetProperty("CurrentForegroundThreadData", BindingFlags.Static | BindingFlags.NonPublic);
-			m_currentForegroundThreadData.SetValue(null, result);
-		}
-
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//var x = new BasicTypingTest();
-			//x.Setup();
-			//x.BasicTypingPerf();
-
-			//var summary = BenchmarkRunner.Run<BasicTypingTest>();
-
-			var thread = new Thread(() =>
-			{
-				VsServiceProvider.Initialize();
-				VsMefContainerBuilder.CreateDefault().Build();
-
-				//Can we please not have to do this?
-				initializeRoslynForegroundThreadDataObject();
-				var window = new VSEmbed.DemoApp.MainWindow();
-				new WpfApplication(window).Run();
-			});
-
-			thread.SetApartmentState(ApartmentState.STA);
-			thread.Start();
-			thread.Join();
+			//UITest();
+			Benchmark();
 		}
-		private class WpfApplication : Application
+
+		/// <summary>
+		/// BenchmarkRunner runs the benchmark. Run it in Release configuration!
+		/// </summary>
+		private static void Benchmark()
 		{
-			private readonly VSEmbed.DemoApp.MainWindow _mainWindow;
+			var summary = BenchmarkRunner.Run<BasicTyping>();
+			Console.ReadLine();
+		}
 
-			public WpfApplication(VSEmbed.DemoApp.MainWindow mainWindow)
+		/// <summary>
+		/// DiagnosticRunner runs benchmark code in the UI context
+		/// </summary>
+		private static void UITest()
+		{
+			var test = new BasicTyping()
 			{
-				_mainWindow = mainWindow;
-			}
-
-			protected override void OnStartup(StartupEventArgs e)
-			{
-				_mainWindow.Show();
-				//_mainWindow.SendKeyInput("{");
-			}
+				CurrentContentType = ContentType.CSharp
+			};
+			// DiagnosticRunner runs benchmark code in the UI context
+			DiagnosticApplication.Run(test, test.BasicTypingPerf);
 		}
 	}
 }

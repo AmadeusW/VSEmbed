@@ -7,10 +7,10 @@ namespace VSEmbed.DemoApp
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class EditorWindow : Window
 	{
 		UIElement _wpfTextView;
-		public MainWindow()
+		public EditorWindow()
 		{
 			InitializeComponent();
 
@@ -21,18 +21,12 @@ namespace VSEmbed.DemoApp
 		}
 
 		public void SendKeystrokes(string input)
-		{
-			System.Windows.Input.Test.SendKeys.Send(_wpfTextView, input);
-		}
+			=> System.Windows.Input.Test.SendKeys.Send(_wpfTextView, input);
 
 		public void SendKey(Key key, ModifierKeys modifiers = ModifierKeys.None)
-		{
-			System.Windows.Input.Test.SendKeys.Send(_wpfTextView, key, modifiers);
-		}
+			=> System.Windows.Input.Test.SendKeys.Send(_wpfTextView, key, modifiers);
 
 		public void SetContentType(string contentType)
-		{
-			this.mainTextViewHost.ContentType = contentType;
-		}
+			=> this.mainTextViewHost.ContentType = contentType;
 	}
 }

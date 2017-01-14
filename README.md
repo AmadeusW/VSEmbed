@@ -1,43 +1,19 @@
 VSEmbed
 =======
 
-VSEmbed lets you embed the Visual Studio editor &amp; theme architecture in your own programs.
+* Forked from [SLaks/VSEmbed](https://github.com/SLaks/VSEmbed)
 
-![better screenshpt](https://pbs.twimg.com/media/B2CVhsmCAAAUPmg.png:large)
-![screenshot](https://pbs.twimg.com/media/B1dX6NxCMAAv6iZ.png:large)
+How to extend
+=============
 
-#Usage
-Install [from NuGet](https://www.nuget.org/packages/VSEmbed/).
+`VSEmbed.DemoApp` is the basic standalone VS editor. It pulls most DLLs it needs from NuGet and MyGet. Some DLLs come from the `lib\` directory. 
 
-To initialize Visual Studio, you need the following code:
+Any project that wishes to uses the VS editor must provide the same set of DLLs in its own output directory.
 
-```C#
-VsLoader.LoadLatest();    // Or .Load(new Version(...))
-VsServiceProvider.Initialize();
-VsMefContainerBuilder.CreateDefault().Build(); // Only needed for editor embedding
-```
-
-The last line can only be JITted after initializing VsLoader (because `Build()` returns an `IComponentModel`, which is defined in a VS assembly), so you should put it in a separate method and call that method after setting up VsLoader.
-
-You _must_ create the MEF container using `VsMefContainerBuilder`; it will use Visual Studio 2015's [new version of MEF](http://blog.slaks.net/2014-11-16/mef2-roslyn-visual-studio-compatibility/) (where available) to support Roslyn's MEF2 exports.  
-If you're already using MEF, you can call `WithFilteredCatalogs(assemblies)` or `WithCatalog(types)` to add your own assemblies to the MEF container.   Note that `VsMefContainerBuilder` is immutable; these methods return new instances with the new catalogs added.
-
-#Using Roslyn
-After loading Dev14, you can set the ContentType of an ITextBuffer to `C#` or `VisualBasic` to activate the Roslyn editors.  However, you will also need to link the ITextBuffer to a Roslyn [Workspace](http://source.roslyn.codeplex.com/#Microsoft.CodeAnalysis.Workspaces/Workspace/Workspace.cs) to activate the language services.  In addition, the workspace must have an `IWorkCoordinatorRegistrationService` registered to run diagnostics in the background.
-
-To do all this, use my `EditorWorkspace` class, and call `CreateDocument()` to create a new document linked to a text buffer, or `OpenDocument()` to link an existing document (which is already in the Workspace) to a text buffer.  You can also inherit this class to provide additional behavior.  You should also set `ActiveDocumentId` to the document ID for the document being edited in the current text view, for quicker live error checking.
-
-To add references to framework assemblies, call `CreateFrameworkReference()`, which will locate the XML doc comment files for full IntelliSense.
-
-If you create a Roslyn-powered buffer and do not link it to a workspace, I have a buffer listener which will create a simple workspace with a few references for you.
-
-#Caveats
- - The end-user must have a version (2012+) of Visual Studio (including Express editions) installed for this to run.
- - The Roslyn editor services will only work if VS2015 Preview (or later builds) is installed.
-  - To make it support older Dev14 CTPs, use Reflection to call `MefHostService` if `MefV1HostServices` does not exist, and re-add the older `XmlDocumentationProvider` code that was replaced in this commit.
- - If Visual Studio 2012 assemblies are in the GAC, other versions will not load properly.
- - Code snippets are not implemented.
- - Peek does not work.
-  - To make Peek work, implement & export `IPeekResultPresenter` & `IPeekResultPresentation`, and create a WpfTextViewHost in `Create()`.  Note that peek only operates on file paths.
-- Rename with preview does not work.
- - To make this work, implement `IVsPreviewChangesService` and add it to the ServiceProvider.
+To bring the NuGet dependencies.
+  1. Copy contents of [`VSEmbed.DemoApp\packages.config`](https://github.com/AmadeusW/VSEmbed/blob/master/VSEmbed.DemoApp/packages.config) to your project's `packages.config`
+  2. Run `Update-Package -Reinstall -ProjectName [YourProjectName]` in Package Manager Console [source](http://stackoverflow.com/questions/11026137/can-i-copy-the-nuget-package-configuration-from-one-project-to-another)
+   
+To bring hard dependencies
+  1. Copy all References with `<HintPath>..\lib\` from [`VSEmbed.DemoApp\VSEmbed.DemoApp.csproj`](https://github.com/AmadeusW/VSEmbed/blob/master/VSEmbed.DemoApp/VSEmbed.DemoApp.csproj) to your project's `.csproj`
+ 
