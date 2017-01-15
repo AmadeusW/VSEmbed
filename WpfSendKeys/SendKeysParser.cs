@@ -6,8 +6,6 @@ namespace System.Windows.Input.Test
     {
         string text;
         int current = 0;
-        bool insideParentheses = false;
-        ModifierKeys currentModifiers = ModifierKeys.None;
         List<KeyPressInfo> result = new List<KeyPressInfo>();
 
         public static IEnumerable<KeyPressInfo> Parse(string text)
@@ -23,26 +21,12 @@ namespace System.Windows.Input.Test
 
             while (current < text.Length)
             {
-                if (IsPrintableChar())
-                {
-                    ParseChar();
-                    if (!insideParentheses && currentModifiers != ModifierKeys.None)
-                    {
-                        currentModifiers = ModifierKeys.None;
-                    }
-                }
-                else
-                {
-					//TODO: HandleNewline here
-					ParseChar();
-
-                    //Error("Unexpected character: '" + CurrentChar + "'");
-                }
-
+                ParseChar();
                 if (oldCurrent == current)
                 {
                     Error("Didn't advance forward, stuck at parsing character '" + CurrentChar + "'");
                 }
+
                 oldCurrent = current;
             }
 
@@ -107,37 +91,9 @@ namespace System.Windows.Input.Test
             {"F16", new KeyPressInfo(Key.F16)},
         };
 
-        private void ParseCurly()
-        {
-            foreach (var specialValue in specialValues)
-            {
-                var name = specialValue.Key;
-                if (current + name.Length + 2 > text.Length)
-                {
-                    continue;
-                }
-                if (text.Substring(current + 1, name.Length + 1).Equals(name + "}", StringComparison.OrdinalIgnoreCase))
-                {
-                    current += name.Length + 2;
-                    var gesture = specialValue.Value;
-                    Add(gesture);
-                    return;
-                }
-            }
-            int closing = text.IndexOf('}', current);
-            if (closing == -1)
-            {
-                Error("Closing curly missing");
-            }
-            Error("Unknown key: " + text.Substring(current, closing - current + 1));
-        }
-
         private void Add(KeyPressInfo gesture)
         {
-            if (currentModifiers != ModifierKeys.None)
-            {
-                gesture = new KeyPressInfo(gesture.Key, gesture.Modifiers | currentModifiers);
-            }
+			gesture = new KeyPressInfo(gesture.Key, gesture.Modifiers);
             result.Add(gesture);
         }
 
@@ -175,12 +131,6 @@ namespace System.Windows.Input.Test
             }
 
 			current++;
-        }
-
-        private bool IsPrintableChar()
-        {
-            return char.IsLetterOrDigit(CurrentChar)
-                || KeyboardLayout.Instance.GetKeyGestureForChar(CurrentChar) != null;
         }
 
         private char CurrentChar
