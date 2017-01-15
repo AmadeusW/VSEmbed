@@ -6,7 +6,6 @@ namespace System.Windows.Input.Test
     {
         public static IEnumerable<KeyPressInfo> Parse(string text)
         {
-			//this.text = text;
 			List<KeyPressInfo> result = new List<KeyPressInfo>();
             int current = 0;
 
@@ -23,12 +22,10 @@ namespace System.Windows.Input.Test
             return result;
         }
 
-      
         private static KeyPressInfo ParseChar(char currentChar)
         {
             var key = Key.None;
             var modifiers = ModifierKeys.None;
-
             var ch = currentChar.ToString();
 
             KeyPressInfo knownKeyPress = KeyboardLayout.Instance.GetKeyGestureForChar(currentChar);
@@ -50,7 +47,7 @@ namespace System.Windows.Input.Test
 			return new KeyPressInfo(key, modifiers);
         }
 
-		private static Dictionary<string, KeyPressInfo> specialValues = new Dictionary<string, KeyPressInfo>()
+		private readonly static Dictionary<string, KeyPressInfo> specialValues = new Dictionary<string, KeyPressInfo>()
 		{
 			{"+", new KeyPressInfo(Key.OemPlus, ModifierKeys.Shift)},
 			{"^", new KeyPressInfo(Key.D6, ModifierKeys.Shift)},
