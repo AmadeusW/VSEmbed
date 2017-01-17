@@ -31,6 +31,12 @@ namespace VSEmbed.Controls
 			TextView.TextBuffer.Changed += (s, e) => Text = TextView.TextSnapshot.GetText();
 		}
 
+		public void Clear()
+		{
+			if (TextView.TextBuffer.CurrentSnapshot.Length > 0)
+				TextView.TextBuffer.Delete(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length));
+		}
+
 		private static Lazy<IReadOnlyList<string>> availableContentTypes = new Lazy<IReadOnlyList<string>>(() =>
 			VsServiceProvider.Instance.ComponentModel
 				.GetService<IContentTypeRegistryService>()

@@ -29,5 +29,8 @@ namespace VSEmbed.DemoApp
 
 		public void SetContentType(string contentType)
 			=> this.mainTextViewHost.ContentType = contentType;
+
+		public void ClearEditor()
+			=> this.mainTextViewHost.Clear();
 	}
 }
