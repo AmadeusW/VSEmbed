@@ -25,7 +25,7 @@ namespace VSEmbed.DemoApp
 			=> SendKeys.Send(_wpfTextView, input);
 
 		public void SendKey(Key key, ModifierKeys modifiers = ModifierKeys.None)
-			=> SendKeys.Send(_wpfTextView, key, modifiers);
+			=> SendKeys.Send(_wpfTextView, new KeyPressInfo(key, modifiers));
 
 		public void SetContentType(string contentType)
 			=> this.mainTextViewHost.ContentType = contentType;

@@ -11,20 +11,20 @@ namespace WpfSendKeys
             var sequence = SendKeysParser.Parse(text);
             foreach (var keyPressInfo in sequence)
             {
-                Send(element, keyPressInfo.Key, keyPressInfo.Modifiers);
+                Send(element, keyPressInfo);
             }
         }
 
-        public static void Send(UIElement element, Key key, ModifierKeys modifiers)
+        public static void Send(UIElement element, KeyPressInfo keyPressInfo)
         {
             KeyboardDevice keyboardDevice = InputManager.Current.PrimaryKeyboardDevice;
-            if (modifiers != ModifierKeys.None)
+            if (keyPressInfo.Modifiers != ModifierKeys.None)
             {
                 MockKeyboardDevice mockKeyboardDevice = MockKeyboardDevice.Instance;
-                mockKeyboardDevice.Modifiers = modifiers;
+                mockKeyboardDevice.Modifiers = keyPressInfo.Modifiers;
                 keyboardDevice = mockKeyboardDevice;
             }
-            RaiseKeyEvent(element, key, modifiers, keyboardDevice);
+            RaiseKeyEvent(element, keyPressInfo, keyboardDevice);
         }
 
         public static void SendInput(UIElement element, string text)
@@ -39,11 +39,11 @@ namespace WpfSendKeys
             element.RaiseEvent(args);
         }
 
-        private static void RaiseKeyEvent(UIElement element, Key key, ModifierKeys modifiers, KeyboardDevice keyboardDevice)
+        private static void RaiseKeyEvent(UIElement element, KeyPressInfo keyPressInfo, KeyboardDevice keyboardDevice)
         {
             PresentationSource presentationSource = PresentationSource.FromVisual(element);
             int timestamp = Environment.TickCount;
-            KeyEventArgs args = new KeyEventArgs(keyboardDevice, presentationSource, timestamp, key);
+            KeyEventArgs args = new KeyEventArgs(keyboardDevice, presentationSource, timestamp, keyPressInfo.Key);
 
             // 1) PreviewKeyDown
             args.RoutedEvent = Keyboard.PreviewKeyDownEvent;
@@ -54,7 +54,7 @@ namespace WpfSendKeys
             element.RaiseEvent(args);
 
             // 3) TextInput
-            SendInputIfNecessary(element, key, modifiers, keyboardDevice);
+            SendInputIfNecessary(element, keyPressInfo, keyboardDevice);
 
             // 4) PreviewKeyUp
             args.RoutedEvent = Keyboard.PreviewKeyUpEvent;
@@ -65,19 +65,19 @@ namespace WpfSendKeys
             element.RaiseEvent(args);
         }
 
-        private static void SendInputIfNecessary(UIElement element, Key key, ModifierKeys modifiers, KeyboardDevice keyboardDevice)
+        private static void SendInputIfNecessary(UIElement element, KeyPressInfo keyPressInfo, KeyboardDevice keyboardDevice)
         {
-            if (modifiers.HasFlag(ModifierKeys.Control) || modifiers.HasFlag(ModifierKeys.Alt))
+            if (keyPressInfo.Modifiers.HasFlag(ModifierKeys.Control) || keyPressInfo.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 return;
             }
 
             string input = "";
 
-            input = KeyboardLayout.Instance.GetInputForGesture(new KeyPressInfo(key, modifiers));
+			input = KeyboardLayout.Instance.GetInputForGesture(keyPressInfo);
             if (input == "")
             {
-                input = GetInputFromKey(key);
+                input = GetInputFromKey(keyPressInfo.Key);
             }
 
             if (string.IsNullOrEmpty(input))
@@ -85,7 +85,7 @@ namespace WpfSendKeys
                 return;
             }
 
-            if (modifiers == ModifierKeys.Shift)
+            if (keyPressInfo.Modifiers == ModifierKeys.Shift)
             {
                 input = input.ToUpperInvariant();
             }
