@@ -50,7 +50,8 @@
             element.RaiseEvent(args);
 
             // 3) TextInput
-            SendInputIfNecessary(element, key, modifiers, keyboardDevice);
+            if (!args.Handled) // Return is handled by (Preview)KeyDown, so don't send it twice
+                SendInputIfNecessary(element, key, modifiers, keyboardDevice);
 
             // 4) PreviewKeyUp
             args.RoutedEvent = Keyboard.PreviewKeyUpEvent;
