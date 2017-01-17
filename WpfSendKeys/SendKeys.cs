@@ -55,7 +55,8 @@ namespace WpfSendKeys
 			element.RaiseEvent(args);
 
 			// 3) TextInput
-			SendInputIfNecessary(element, keyPressInfo, keyboardDevice);
+						if (!args.Handled) // Newlines are handled by KeyDownEvent, so don't input two newlines
+									SendInputIfNecessary(element, key, modifiers, keyboardDevice);
 
 			// 4) PreviewKeyUp
 			args.RoutedEvent = Keyboard.PreviewKeyUpEvent;
