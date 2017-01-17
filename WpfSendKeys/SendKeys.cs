@@ -1,121 +1,113 @@
-﻿namespace System.Windows.Input.Test
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Input;
+
+namespace WpfSendKeys
 {
-    public class SendKeys
-    {
-        public static void Send(UIElement element, string text)
-        {
-            var sequence = SendKeysParser.Parse(text);
-            foreach (var keyPressInfo in sequence)
-            {
-                Send(element, keyPressInfo.Key, keyPressInfo.Modifiers);
-            }
-        }
+	public class SendKeys
+	{
+		public static void Send(UIElement element, string text)
+		{
+			var sequence = Parse(text);
+			foreach (var keyPressInfo in sequence)
+			{
+				Send(element, keyPressInfo);
+			}
+		}
 
-        public static void Send(UIElement element, Key key, ModifierKeys modifiers)
-        {
-            KeyboardDevice keyboardDevice = InputManager.Current.PrimaryKeyboardDevice;
-            if (modifiers != ModifierKeys.None)
-            {
-                MockKeyboardDevice mockKeyboardDevice = MockKeyboardDevice.Instance;
-                mockKeyboardDevice.Modifiers = modifiers;
-                keyboardDevice = mockKeyboardDevice;
-            }
-            RaiseKeyEvent(element, key, modifiers, keyboardDevice);
-        }
+		public static void Send(UIElement element, KeyPressInfo keyPressInfo)
+		{
+			KeyboardDevice keyboardDevice = InputManager.Current.PrimaryKeyboardDevice;
+			if (keyPressInfo.Modifiers != ModifierKeys.None)
+			{
+				MockKeyboardDevice mockKeyboardDevice = MockKeyboardDevice.Instance;
+				mockKeyboardDevice.Modifiers = keyPressInfo.Modifiers;
+				keyboardDevice = mockKeyboardDevice;
+			}
+			RaiseKeyEvent(element, keyPressInfo, keyboardDevice);
+		}
 
-        public static void SendInput(UIElement element, string text)
-        {
-            InputManager inputManager = InputManager.Current;
-            InputDevice inputDevice = inputManager.PrimaryKeyboardDevice;
-            TextComposition composition = new TextComposition(inputManager, element, text);
-            TextCompositionEventArgs args = new TextCompositionEventArgs(inputDevice, composition);
-            args.RoutedEvent = UIElement.PreviewTextInputEvent;
-            element.RaiseEvent(args);
-            args.RoutedEvent = UIElement.TextInputEvent;
-            element.RaiseEvent(args);
-        }
+		public static void SendInput(UIElement element, string text)
+		{
+			InputManager inputManager = InputManager.Current;
+			InputDevice inputDevice = inputManager.PrimaryKeyboardDevice;
+			TextComposition composition = new TextComposition(inputManager, element, text);
+			TextCompositionEventArgs args = new TextCompositionEventArgs(inputDevice, composition);
+			args.RoutedEvent = UIElement.PreviewTextInputEvent;
+			element.RaiseEvent(args);
+			args.RoutedEvent = UIElement.TextInputEvent;
+			element.RaiseEvent(args);
+		}
 
-        private static void RaiseKeyEvent(UIElement element, Key key, ModifierKeys modifiers, KeyboardDevice keyboardDevice)
-        {
-            PresentationSource presentationSource = PresentationSource.FromVisual(element);
-            int timestamp = Environment.TickCount;
-            KeyEventArgs args = new KeyEventArgs(keyboardDevice, presentationSource, timestamp, key);
+		private static void RaiseKeyEvent(UIElement element, KeyPressInfo keyPressInfo, KeyboardDevice keyboardDevice)
+		{
+			PresentationSource presentationSource = PresentationSource.FromVisual(element);
+			int timestamp = Environment.TickCount;
+			KeyEventArgs args = new KeyEventArgs(keyboardDevice, presentationSource, timestamp, keyPressInfo.Key);
 
-            // 1) PreviewKeyDown
-            args.RoutedEvent = Keyboard.PreviewKeyDownEvent;
-            element.RaiseEvent(args);
+			// 1) PreviewKeyDown
+			args.RoutedEvent = Keyboard.PreviewKeyDownEvent;
+			element.RaiseEvent(args);
 
-            // 2) KeyDown
-            args.RoutedEvent = Keyboard.KeyDownEvent;
-            element.RaiseEvent(args);
+			// 2) KeyDown
+			args.RoutedEvent = Keyboard.KeyDownEvent;
+			element.RaiseEvent(args);
 
-            // 3) TextInput
-            if (!args.Handled) // Newlines are handled by KeyDownEvent, so don't input two newlines
-                SendInputIfNecessary(element, key, modifiers, keyboardDevice);
+			// 3) TextInput
+						if (!args.Handled) // Newlines are handled by KeyDownEvent, so don't input two newlines
+									SendInputIfNecessary(element, key, modifiers, keyboardDevice);
 
-            // 4) PreviewKeyUp
-            args.RoutedEvent = Keyboard.PreviewKeyUpEvent;
-            element.RaiseEvent(args);
+			// 4) PreviewKeyUp
+			args.RoutedEvent = Keyboard.PreviewKeyUpEvent;
+			element.RaiseEvent(args);
 
-            // 5) KeyUp
-            args.RoutedEvent = Keyboard.KeyUpEvent;
-            element.RaiseEvent(args);
-        }
+			// 5) KeyUp
+			args.RoutedEvent = Keyboard.KeyUpEvent;
+			element.RaiseEvent(args);
+		}
 
-        private static void SendInputIfNecessary(UIElement element, Key key, ModifierKeys modifiers, KeyboardDevice keyboardDevice)
-        {
-            if (modifiers.HasFlag(ModifierKeys.Control) || modifiers.HasFlag(ModifierKeys.Alt))
-            {
-                return;
-            }
+		private static void SendInputIfNecessary(UIElement element, KeyPressInfo keyPressInfo, KeyboardDevice keyboardDevice)
+		{
+			if (keyPressInfo.Modifiers.HasFlag(ModifierKeys.Control) || keyPressInfo.Modifiers.HasFlag(ModifierKeys.Alt))
+			{
+				return;
+			}
 
-            string input = "";
+			string input = keyPressInfo.Input;
+			if (string.IsNullOrEmpty(input))
+			{
+				return;
+			}
 
-            input = KeyboardLayout.Instance.GetInputForGesture(new KeyPressInfo(key, modifiers));
-            if (input == "")
-            {
-                input = GetInputFromKey(key);
-            }
+			if (keyPressInfo.Modifiers == ModifierKeys.Shift)
+			{
+				input = input.ToUpperInvariant();
+			}
+			else
+			{
+				input = input.ToLowerInvariant();
+			}
 
-            if (string.IsNullOrEmpty(input))
-            {
-                return;
-            }
+			SendInput(element, input);
+		}
 
-            if (modifiers == ModifierKeys.Shift)
-            {
-                input = input.ToUpperInvariant();
-            }
-            else
-            {
-                input = input.ToLowerInvariant();
-            }
+		private static IEnumerable<KeyPressInfo> Parse(string text)
+		{
+			var result = new List<KeyPressInfo>();
+			int current = 0;
 
-            SendInput(element, input);
-        }
+			while (current < text.Length)
+			{
+				var key = KeyboardLayout.Instance.GetKeyGestureForChar(text[current]);
+				if (key.Key != Key.None)
+				{
+					result.Add(key);
+				}
+				current++;
+			}
 
-        private static string GetInputFromKey(Key key)
-        {
-            switch (key)
-            {
-                case Key.Left:
-                case Key.Up:
-                case Key.Right:
-                case Key.Down:
-                case Key.Home:
-                case Key.End:
-                case Key.Insert:
-                case Key.Delete:
-                case Key.PageUp:
-                case Key.PageDown:
-                case Key.Back:
-                case Key.Escape:
-                case Key.Enter:
-                case Key.Tab:
-                case Key.Space:
-                    return "";
-            }
-            return new KeyConverter().ConvertToInvariantString(key);
-        }
-    }
+			return result;
+		}
+	}
 }
