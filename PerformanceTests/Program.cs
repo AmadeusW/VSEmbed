@@ -9,8 +9,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			UITest();
-			//Benchmark();
+			//UITest();
+			Benchmark();
 		}
 
 		/// <summary>
