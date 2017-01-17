@@ -8,8 +8,8 @@ namespace WpfSendKeys
     {
 		private static KeyConverter _keyConverter = new KeyConverter();
 		public string Input { get; }
-        public Key Key { get; set; }
-        public ModifierKeys Modifiers { get; set; }
+		public Key Key { get; set; }
+		public ModifierKeys Modifiers { get; set; }
 
         public KeyPressInfo(Key key, ModifierKeys modifierKeys = ModifierKeys.None)
         {
