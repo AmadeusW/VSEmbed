@@ -72,9 +72,7 @@ namespace WpfSendKeys
                 return;
             }
 
-            string input = "";
-
-			input = KeyboardLayout.Instance.GetInputForGesture(keyPressInfo);
+            string input = keyPressInfo.Input;
             if (input == "")
             {
                 input = GetInputFromKey(keyPressInfo.Key);
