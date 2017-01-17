@@ -9,8 +9,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//UITest();
-			Benchmark();
+			UITest();
+			//Benchmark();
 		}
 
 		/// <summary>
@@ -29,7 +29,9 @@ namespace PerformanceTests
 		{
 			var test = new BasicTyping()
 			{
-				CurrentContentType = ContentType.CSharp
+				CurrentContentType = ContentType.CSharp,
+				ClassCount = 2,
+				Clear = false,
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
 			DiagnosticApplication.Run(test, test.BasicTypingPerf);
