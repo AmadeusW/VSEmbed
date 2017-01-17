@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WpfSendKeys;
 
 namespace VSEmbed.DemoApp
 {
@@ -21,10 +22,10 @@ namespace VSEmbed.DemoApp
 		}
 
 		public void SendKeystrokes(string input)
-			=> System.Windows.Input.Test.SendKeys.Send(_wpfTextView, input);
+			=> SendKeys.Send(_wpfTextView, input);
 
 		public void SendKey(Key key, ModifierKeys modifiers = ModifierKeys.None)
-			=> System.Windows.Input.Test.SendKeys.Send(_wpfTextView, key, modifiers);
+			=> SendKeys.Send(_wpfTextView, key, modifiers);
 
 		public void SetContentType(string contentType)
 			=> this.mainTextViewHost.ContentType = contentType;
