@@ -50,7 +50,7 @@
             element.RaiseEvent(args);
 
             // 3) TextInput
-            if (!args.Handled) // Return is handled by (Preview)KeyDown, so don't send it twice
+            if (!args.Handled) // Newlines are handled by KeyDownEvent, so don't input two newlines
                 SendInputIfNecessary(element, key, modifiers, keyboardDevice);
 
             // 4) PreviewKeyUp
