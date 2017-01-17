@@ -18,6 +18,12 @@ namespace PerformanceTests
 		[Params(ContentType.text, ContentType.CSharp)]
 		public ContentType CurrentContentType { get; set; }
 
+		/// <summary>
+		/// Whether or not to clear the editor at the end of a test case.
+		/// This flag remains true in Benchmark and may be set to false in UI test.
+		/// </summary>
+		public bool Clear { get; set; } = true;
+
 		static TestBase()
 		{
 			VsServiceProvider.Initialize();

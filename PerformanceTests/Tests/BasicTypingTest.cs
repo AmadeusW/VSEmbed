@@ -8,8 +8,6 @@ namespace PerformanceTests.Tests
 		[Params(1, 10)]
 		public int ClassCount { get; set; }
 
-		public bool Clear { get; set; } = true;
-
 		[Benchmark, STAThread]
 		public void BasicTypingPerf()
 		{
@@ -29,8 +27,8 @@ private
 {
 int  x = 5;
 int  y = 6;
-int  z = x+y;
-return  z*1234567890;
+int  z = x ++ y;;
+return  z ** 1234567890;
 }
 }
 
