@@ -7,24 +7,25 @@ namespace WpfSendKeys
 	public class KeyboardLayout
 	{
 		public static readonly KeyboardLayout Instance = new KeyboardLayout();
+		private static KeyConverter _keyCoverter = new KeyConverter();
 
-		public KeyPressInfo GetKeyGestureForChar(char index)
+		public KeyPressInfo GetKeyGestureForChar(char currentChar)
 		{
-			KeyPressInfo result = null;
-			printableChars.TryGetValue(index, out result);
-			return result;
-		}
-
-		public string GetInputForGesture(KeyPressInfo gesture)
-		{
-			foreach (var item in printableChars)
+			if (printableChars.TryGetValue(currentChar, out var result))
 			{
-				if (item.Value.Key == gesture.Key && item.Value.Modifiers == gesture.Modifiers)
-				{
-					return item.Key.ToString();
-				}
+				return result;
 			}
-			return "";
+
+			ModifierKeys modifiers = ModifierKeys.None;
+			var ch = currentChar.ToString();
+			if (char.IsUpper(ch, 0))
+			{
+				ch = ch.ToLower();
+				modifiers = ModifierKeys.Shift;
+			}
+
+			var key = (Key)_keyCoverter.ConvertFromInvariantString(ch);
+			return new KeyPressInfo(key, modifiers);
 		}
 
 		private static readonly Dictionary<char, KeyPressInfo> printableChars = new Dictionary<char, KeyPressInfo>

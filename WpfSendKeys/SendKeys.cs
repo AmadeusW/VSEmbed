@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
@@ -8,7 +9,7 @@ namespace WpfSendKeys
     {
         public static void Send(UIElement element, string text)
         {
-            var sequence = SendKeysParser.Parse(text);
+            var sequence = Parse(text);
             foreach (var keyPressInfo in sequence)
             {
                 Send(element, keyPressInfo);
@@ -73,11 +74,6 @@ namespace WpfSendKeys
             }
 
             string input = keyPressInfo.Input;
-            if (input == "")
-            {
-                input = GetInputFromKey(keyPressInfo.Key);
-            }
-
             if (string.IsNullOrEmpty(input))
             {
                 return;
@@ -95,28 +91,22 @@ namespace WpfSendKeys
             SendInput(element, input);
         }
 
-        private static string GetInputFromKey(Key key)
-        {
-            switch (key)
-            {
-                case Key.Left:
-                case Key.Up:
-                case Key.Right:
-                case Key.Down:
-                case Key.Home:
-                case Key.End:
-                case Key.Insert:
-                case Key.Delete:
-                case Key.PageUp:
-                case Key.PageDown:
-                case Key.Back:
-                case Key.Escape:
-                case Key.Enter:
-                case Key.Tab:
-                case Key.Space:
-                    return "";
-            }
-            return new KeyConverter().ConvertToInvariantString(key);
-        }
-    }
+		private static IEnumerable<KeyPressInfo> Parse(string text)
+		{
+			var result = new List<KeyPressInfo>();
+			int current = 0;
+
+			while (current < text.Length)
+			{
+				var key = KeyboardLayout.Instance.GetKeyGestureForChar(text[current]);
+				if (key.Key != Key.None)
+				{
+					result.Add(key);
+				}
+				current++;
+			}
+
+			return result;
+		}
+	}
 }
