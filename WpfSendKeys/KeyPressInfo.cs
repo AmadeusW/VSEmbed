@@ -4,29 +4,29 @@ using System.Windows.Input;
 
 namespace WpfSendKeys
 {
-    public class KeyPressInfo
-    {
+	public class KeyPressInfo
+	{
 		private static KeyConverter _keyConverter = new KeyConverter();
 		public string Input { get; }
 		public Key Key { get; set; }
 		public ModifierKeys Modifiers { get; set; }
 
-        public KeyPressInfo(Key key, ModifierKeys modifierKeys = ModifierKeys.None)
-        {
-            this.Key = key;
-            this.Modifiers = modifierKeys;
+		public KeyPressInfo(Key key, ModifierKeys modifierKeys = ModifierKeys.None)
+		{
+			this.Key = key;
+			this.Modifiers = modifierKeys;
 			this.Input = getPrintableString(this.Key, this.Modifiers);
-        }
+		}
 
-        public override string ToString()
-        {
-            var result = Key.ToString();
-            if (Modifiers != ModifierKeys.None)
-            {
-                result = Modifiers.ToString() + " + " + result;
-            }
-            return result;
-        }
+		public override string ToString()
+		{
+			var result = Key.ToString();
+			if (Modifiers != ModifierKeys.None)
+			{
+				result = Modifiers.ToString() + " + " + result;
+			}
+			return result;
+		}
 
 		private static string getPrintableString(Key key, ModifierKeys modifiers)
 		{
