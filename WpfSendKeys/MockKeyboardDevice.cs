@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Windows.Input;
 
-namespace System.Windows.Input.Test
+namespace WpfSendKeys
 {
     /// <summary>
     /// This serves to mock the state of the modifier keys Shift, Alt and Ctrl.

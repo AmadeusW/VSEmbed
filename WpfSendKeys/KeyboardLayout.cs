@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
+using System.Windows.Input.Test;
 
-namespace System.Windows.Input.Test
+namespace WpfSendKeys
 {
     public class KeyboardLayout
     {

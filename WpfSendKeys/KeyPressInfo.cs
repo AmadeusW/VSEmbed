@@ -1,4 +1,6 @@
-﻿namespace System.Windows.Input.Test
+﻿using System.Windows.Input;
+
+namespace WpfSendKeys
 {
     public class KeyPressInfo
     {

@@ -1,4 +1,8 @@
-﻿namespace System.Windows.Input.Test
+﻿using System;
+using System.Windows;
+using System.Windows.Input;
+
+namespace WpfSendKeys
 {
     public class SendKeys
     {

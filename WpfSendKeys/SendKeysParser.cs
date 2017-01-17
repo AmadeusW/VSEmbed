@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
 
-namespace System.Windows.Input.Test
+namespace WpfSendKeys
 {
     public static class SendKeysParser
     {
