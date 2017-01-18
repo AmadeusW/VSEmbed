@@ -8,7 +8,7 @@ namespace PerformanceTests.Tests
 		[Params(1, 10)]
 		public int ClassCount { get; set; }
 
-		[Params(0, 200)]
+		[Params(0, 1, 10)]
 		public int IntellisenseLaunchCount { get; set; }
 
 		[Benchmark, STAThread]
@@ -17,6 +17,8 @@ namespace PerformanceTests.Tests
 			Host.SendKeystrokes("namespace");
 			Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
 			Host.SendKeystrokes(" TestNamespace{\r\n");
+
+			// Test: Type code
 			for (int c = 0; c < ClassCount; c++)
 			{
 				Host.SendKeystrokes("class  SampleClass" + c);
@@ -29,11 +31,6 @@ private
 {
 int  x = 5;
 int  y = ");
-				for (int i = 0; i < IntellisenseLaunchCount; i++)
-				{
-					Host.SendKey(System.Windows.Input.Key.Space, System.Windows.Input.ModifierKeys.Control);
-					Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
-				}
 
 				Host.SendKeystrokes(@"6;
 int  z = x ++ y;;
@@ -43,6 +40,14 @@ return  z ** 1234567890;
 
 ");
 			}
+
+			// Test: Launch intellisense
+			for (int i = 0; i < IntellisenseLaunchCount; i++)
+			{
+				Host.SendKey(System.Windows.Input.Key.Space, System.Windows.Input.ModifierKeys.Control);
+				Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
+			}
+
 			Host.SendKeystrokes("}");
 
 			if (Clear)
