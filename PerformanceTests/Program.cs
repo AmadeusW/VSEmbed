@@ -11,8 +11,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//UITest();
-			Benchmark();
+			UITest();
+			//Benchmark();
 		}
 
 		/// <summary>
@@ -23,9 +23,11 @@ namespace PerformanceTests
 			var config = ManualConfig.Create(DefaultConfig.Instance);
 			config.Add(new Job("TestJob")
 			{
-				Run = { LaunchCount = 2, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
+				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
-			var summary = BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
+			var summary1 = BenchmarkRunner.Run<CompletionTest>(config);
+			var summary2 = BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
+			var summary3 = BenchmarkRunner.Run<BasicTypingTest>(config);
 			Console.ReadLine();
 		}
 
@@ -34,13 +36,15 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new CutCopyPasteUndoTest()
+			var test = new CompletionTest()
 			{
 				CurrentContentType = ContentType.CSharp,
-				Undo = true
+				IntellisenseLaunchCount = 2,
+				LargeFile = true,
+				CompletionLocation = Props.Location.WithinMethod,
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticApplication.Run(test, test.CutPaste);
+			DiagnosticApplication.Run(test, test.LaunchIntellisenseAndComplete);
 		}
 	}
 }
