@@ -4,7 +4,7 @@ using System;
 
 namespace PerformanceTests.Tests
 {
-	public class BasicTyping : TestBase
+	public class BasicTypingTest : TestBase
 	{
 		[Params(1, 10)]
 		public int ClassCount { get; set; }
@@ -23,7 +23,7 @@ namespace PerformanceTests.Tests
 			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(Location.AfterClass));
 		}
 
-		[Benchmark, STAThread]
+		[Benchmark(OperationsPerInvoke = 1), STAThread]
 		public void BasicTypingPerf()
 		{
 			// Tests performance of working within /* block comments */
@@ -39,9 +39,7 @@ private
  int  SampleMethod()
 {
 int  x = 5;
-int  y = ");
-
-				Host.SendKeystrokes(@"6;
+int  y = 6;
 int  z = x ++ y;;
 return  z ** 1234567890;
 }

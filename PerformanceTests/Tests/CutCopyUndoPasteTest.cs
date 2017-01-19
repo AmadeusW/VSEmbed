@@ -34,7 +34,7 @@ namespace PerformanceTests.Tests
 			Host.SendKey(System.Windows.Input.Key.C, System.Windows.Input.ModifierKeys.Control);
 		}
 
-		[Benchmark(OperationsPerInvoke = 2), STAThread]
+		[Benchmark(OperationsPerInvoke = 1), STAThread]
 		public void CopyPaste()
 		{
 			Select();
