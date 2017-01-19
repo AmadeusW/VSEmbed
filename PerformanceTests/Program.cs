@@ -20,7 +20,12 @@ namespace PerformanceTests
 		/// </summary>
 		private static void Benchmark()
 		{
-			var summary = BenchmarkRunner.Run<BasicTyping>();
+			var config = ManualConfig.Create(DefaultConfig.Instance);
+			config.Add(new Job("TestJob")
+			{
+				Run = { LaunchCount = 4, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1 }
+			});
+			var summary = BenchmarkRunner.Run<BasicTyping>(config);
 			Console.ReadLine();
 		}
 
