@@ -34,9 +34,9 @@ namespace PerformanceTests.Tests
 
 			string injectedCode = String.Concat(Enumerable.Repeat(NeedToFormat ? injectedUnformatted : injectedFormatted, LineCount));
 
-			var testCode = baseText.Insert(224, injectedCode);
+			var testCode = baseText.Insert(Snippets.GetCaretPositionInConsoleApp(Location.WithinMethod), injectedCode);
 			Host.SetText(testCode);
-			Host.MoveCaret(226);
+			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(Location.WithinMethod) + 2); // Advance to next line
 		}
 
 		[Benchmark(OperationsPerInvoke = 1), STAThread]

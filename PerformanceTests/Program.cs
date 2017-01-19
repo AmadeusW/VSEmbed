@@ -11,8 +11,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			UITest();
-			//Benchmark();
+			//UITest();
+			Benchmark();
 		}
 
 		/// <summary>
@@ -25,9 +25,8 @@ namespace PerformanceTests
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
-			var summary1 = BenchmarkRunner.Run<CompletionTest>(config);
-			var summary2 = BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
-			var summary3 = BenchmarkRunner.Run<BasicTypingTest>(config);
+			var summary1 = BenchmarkRunner.Run<BraceCompletionTest>(config);
+			var summary2 = BenchmarkRunner.Run<AutoformattingTest>(config);
 			Console.ReadLine();
 		}
 
@@ -36,15 +35,14 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new AutoformattingTest()
+			var test = new BraceCompletionTest()
 			{
 				CurrentContentType = ContentType.CSharp,
-				NeedToFormat = true,
-				NeedToIndent = true,
-				LineCount = 10
+				Folded = true,
+				LineCount = 100,
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticApplication.Run(test, test.AutoFormat);
+			DiagnosticApplication.Run(test, test.InvokeBraceCompletion);
 		}
 	}
 }

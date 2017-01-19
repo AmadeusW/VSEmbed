@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using PerformanceTests.Props;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PerformanceTests.Tests
@@ -10,17 +11,22 @@ namespace PerformanceTests.Tests
 		[Params(true, false)]
 		public bool Folded { get; set; }
 
+		[Params(10, 100, 1000)]
+		public int LineCount { get; set; }
+
 		public override void SetupHost()
 		{
 			base.SetupHost();
 
-			// Remove comments
-			var testCode = Regex.Replace(Snippets.ExtraCode, @"\/\/(.*?)\r?\n", String.Empty);
-			// Conditionally remove newlines
-			if (Folded)
-				testCode = testCode.Replace("\r\n", String.Empty);
+			var baseText = Snippets.ConsoleApp;
+			// Ten repetitions of "a", "b", "c"
+			string unfoldedCode = @"void M() { }\r\n";
+			string foldedCode = @"void M() { } ";
 
-			Host.SetText(Snippets.ConsoleApp + testCode);
+			string injectedCode = String.Concat(Enumerable.Repeat(Folded ? foldedCode : unfoldedCode, LineCount));
+
+			var testCode = baseText.Insert(Snippets.GetCaretPositionInConsoleApp(Location.AfterClass), injectedCode);
+			Host.SetText(testCode);
 			Host.MoveCaretToEnd();
 		}
 
@@ -28,8 +34,10 @@ namespace PerformanceTests.Tests
 		public void InvokeBraceCompletion()
 		{
 			// Brace completion works only for syntax nodes contained directly in affected braces.
-			//Host.SendKey(System.Windows.Input.Key.Enter);
-			Host.SendKey(System.Windows.Input.Key.X);
+			// Remove the namespace's brace and insert it again
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKey(System.Windows.Input.Key.Back);
+			Host.SendKeystrokes("}");
 		}
 	}
 }

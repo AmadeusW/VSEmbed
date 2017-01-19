@@ -36,7 +36,7 @@ namespace PerfTest
 				case Location.WithinClass:
 					return 175;
 				case Location.WithinMethod:
-					return 227;
+					return 224;
 				case Location.AfterClass:
 					return 244;
 			}
