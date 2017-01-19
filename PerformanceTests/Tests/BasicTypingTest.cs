@@ -8,16 +8,37 @@ namespace PerformanceTests.Tests
 		[Params(1, 10)]
 		public int ClassCount { get; set; }
 
-		[Params(0, 1, 10)]
+		[Params(0, 10)]
 		public int IntellisenseLaunchCount { get; set; }
+
+		public override void SetupHost()
+		{
+			base.SetupHost();
+
+			Host.SetText(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+    }
+
+}
+");
+			Host.MoveCaret(249);
+		}
 
 		[Benchmark, STAThread]
 		public void BasicTypingPerf()
 		{
-			Host.SendKeystrokes("namespace");
-			Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
-			Host.SendKeystrokes(" TestNamespace{\r\n");
-
 			// Test: Type code
 			for (int c = 0; c < ClassCount; c++)
 			{
@@ -47,11 +68,6 @@ return  z ** 1234567890;
 				Host.SendKey(System.Windows.Input.Key.Space, System.Windows.Input.ModifierKeys.Control);
 				Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
 			}
-
-			Host.SendKeystrokes("}");
-
-			if (Clear)
-				Host.ClearEditor();
 		}
 	}
 }

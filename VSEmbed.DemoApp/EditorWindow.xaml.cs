@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WpfSendKeys;
@@ -30,7 +31,13 @@ namespace VSEmbed.DemoApp
 		public void SetContentType(string contentType)
 			=> this.mainTextViewHost.ContentType = contentType;
 
-		public void ClearEditor()
+		public void ClearText()
 			=> this.mainTextViewHost.Clear();
+
+		public void SetText(string text)
+			=> this.mainTextViewHost.SetText(text);
+
+		public void MoveCaret(int line)
+			=> this.mainTextViewHost.MoveCaret(line);
 	}
 }
