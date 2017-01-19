@@ -37,7 +37,10 @@ namespace VSEmbed.DemoApp
 		public void SetText(string text)
 			=> this.mainTextViewHost.SetText(text);
 
-		public void MoveCaret(int line)
-			=> this.mainTextViewHost.MoveCaret(line);
+		public void MoveCaret(int position)
+			=> this.mainTextViewHost.MoveCaret(position);
+
+		public void MoveCaretToEnd()
+			=> this.mainTextViewHost.MoveCaretToEnd();
 	}
 }

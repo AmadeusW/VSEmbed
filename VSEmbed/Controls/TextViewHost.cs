@@ -85,6 +85,11 @@ namespace VSEmbed.Controls
 			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextBuffer.CurrentSnapshot, position));
 		}
 
+		public void MoveCaretToEnd()
+		{
+			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextBuffer.CurrentSnapshot, TextView.TextBuffer.CurrentSnapshot.Length));
+		}
+
 		public void Clear()
 		{
 			if (TextView.TextBuffer.CurrentSnapshot.Length > 0)
