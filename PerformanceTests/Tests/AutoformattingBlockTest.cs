@@ -6,12 +6,17 @@ using System.Text.RegularExpressions;
 
 namespace PerformanceTests.Tests
 {
-	public class BraceCompletionTest : TestBase
+	/// <summary>
+	/// Finds how much time it takes to autoformat a concatenation of elements, e.g.
+	/// { void M() { } void M() { } void M() { } void M() { } void M() { } }
+	/// into multiple lines
+	/// </summary>
+	public class AutoformattingBlockTest : TestBase
 	{
 		[Params(true, false)]
-		public bool Folded { get; set; }
+		public bool Baseline { get; set; }
 
-		[Params(10, 100, 1000)]
+		[Params(128, 256, 512, 1024, 2048)]
 		public int LineCount { get; set; }
 
 		public override void SetupHost()
@@ -19,11 +24,11 @@ namespace PerformanceTests.Tests
 			base.SetupHost();
 
 			var baseText = Snippets.ConsoleApp;
-			// Ten repetitions of "a", "b", "c"
-			string unfoldedCode = @"void M() { }\r\n";
-			string foldedCode = @"void M() { } ";
 
-			string injectedCode = String.Concat(Enumerable.Repeat(Folded ? foldedCode : unfoldedCode, LineCount));
+			string properCode = "void M() { }\r\n";
+			string concatenatedCode = "void M() { } ";
+
+			string injectedCode = String.Concat(Enumerable.Repeat(Baseline ? properCode : concatenatedCode, LineCount));
 
 			var testCode = baseText.Insert(Snippets.GetCaretPositionInConsoleApp(Location.AfterClass), injectedCode);
 			Host.SetText(testCode);
