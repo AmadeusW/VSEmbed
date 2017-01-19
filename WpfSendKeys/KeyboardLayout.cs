@@ -53,7 +53,9 @@ namespace WpfSendKeys
 			{';', new KeyPressInfo(Key.Oem1)},
 			{':', new KeyPressInfo(Key.Oem1, ModifierKeys.Shift)},
 			{'`', new KeyPressInfo(Key.Oem3)},
-			{'~', new KeyPressInfo(Key.Oem3, ModifierKeys.Shift)},
+			// NOTE: We replace tildas with Escape
+			//{'~', new KeyPressInfo(Key.Oem3, ModifierKeys.Shift)},
+			{'~', new KeyPressInfo(Key.Escape)},
 
 			{'\'', new KeyPressInfo(Key.OemQuotes)},
 			{'"', new KeyPressInfo(Key.OemQuotes, ModifierKeys.Shift)},

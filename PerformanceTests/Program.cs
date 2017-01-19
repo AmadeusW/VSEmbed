@@ -36,14 +36,14 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new CutCopyPasteUndoTest()
+			var test = new BasicTypingTest()
 			{
 				CurrentContentType = ContentType.CSharp,
-				Undo = false,
-				LineCount = 200,
+				ClassCount = 2,
+				LargeFile = true
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticApplication.Run(test, test.Cut);
+			DiagnosticApplication.Run(test, test.TypingBasic);
 		}
 	}
 }
