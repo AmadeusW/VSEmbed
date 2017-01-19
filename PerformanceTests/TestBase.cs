@@ -18,12 +18,6 @@ namespace PerformanceTests
 		[Params(ContentType.text, ContentType.CSharp)]
 		public ContentType CurrentContentType { get; set; }
 
-		/// <summary>
-		/// Whether or not to clear the editor at the end of a test case.
-		/// This flag remains true in Benchmark and may be set to false in UI test.
-		/// </summary>
-		public bool Clear { get; set; } = true;
-
 		static TestBase()
 		{
 			VsServiceProvider.Initialize();
@@ -44,18 +38,27 @@ namespace PerformanceTests
 		}	
 
 		[Setup]
-		public void Setup()
+		public virtual void Setup()
 		{
 			Host = new VSEmbed.DemoApp.EditorWindow();
 			Host.Show();
+			SetupHost();
+		}
+
+		public virtual void SetupHost()
+		{
 			Host.SetContentType(CurrentContentType.ToString());
 		}
 
 		[Cleanup]
 		public void Cleanup()
 		{
+			Host.ClearText();
 			Host.Close();
 			Host = null;
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		/// <summary>
@@ -68,7 +71,7 @@ namespace PerformanceTests
 		internal void AttachToHost(VSEmbed.DemoApp.EditorWindow host)
 		{
 			Host = host;
-			Host.SetContentType(CurrentContentType.ToString());
+			SetupHost();
 		}
 	}
 }

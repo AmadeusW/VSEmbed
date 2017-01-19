@@ -17,33 +17,40 @@ namespace PerformanceTests
 		private readonly VSEmbed.DemoApp.EditorWindow _mainWindow;
 		private readonly TestBase _testClass;
 		private readonly Action _testMethod;
+		private readonly bool _clean;
 
 		/// <summary>
 		/// Runs benchmark and allows its inspection in the GUI
 		/// </summary>
 		/// <param name="testClass">Instace of TestBase. You may customize parameters.</param>
 		/// <param name="testMethod">Optionally, a test method to run</param>
-		internal static void Run(TestBase testClass, Action testMethod = null)
+		internal static void Run(TestBase testClass, Action testMethod = null, bool clean = false)
 		{
 			if (testClass == null)
 				throw new ArgumentNullException("To properly initialize MEF, please provide an instance of TestBase");
 
 			// The console app will remain active until DiagnosticApplication's window is closed
-			new DiagnosticApplication(testClass, testMethod).Run();
+			new DiagnosticApplication(testClass, testMethod, clean).Run();
 		}
 
-		private DiagnosticApplication(TestBase testClass, Action testMethod)
+		private DiagnosticApplication(TestBase testClass, Action testMethod, bool clean)
 		{
 			this._testClass = testClass;
 			this._testMethod = testMethod;
+			this._clean = clean;
 			_mainWindow = new VSEmbed.DemoApp.EditorWindow();
 			_testClass.AttachToHost(_mainWindow);
+			_testClass.SetupHost();
 		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			_mainWindow.Show();
 			_testMethod?.Invoke();
+			if (_clean)
+			{
+				_testClass.Cleanup();
+			}
 		}
 	}
 }

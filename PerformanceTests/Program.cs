@@ -1,6 +1,8 @@
 ﻿using System;
 using PerformanceTests.Tests;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
 
 namespace PerformanceTests
 {
@@ -9,8 +11,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//UITest();
-			Benchmark();
+			UITest();
+			//Benchmark();
 		}
 
 		/// <summary>
@@ -31,7 +33,6 @@ namespace PerformanceTests
 			{
 				CurrentContentType = ContentType.CSharp,
 				ClassCount = 2,
-				Clear = false,
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
 			DiagnosticApplication.Run(test, test.BasicTypingPerf);
