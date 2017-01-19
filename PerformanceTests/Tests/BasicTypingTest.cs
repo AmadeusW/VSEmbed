@@ -6,7 +6,7 @@ namespace PerformanceTests.Tests
 {
 	public class BasicTypingTest : TestBase
 	{
-		[Params(1, 10)]
+		[Params(8, 16, 32, 64)]
 		public int ClassCount { get; set; }
 
 		[Params(true, false)]

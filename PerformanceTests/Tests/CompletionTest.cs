@@ -6,7 +6,7 @@ namespace PerformanceTests.Tests
 {
 	public class CompletionTest : TestBase
 	{
-		[Params(10, 100)]
+		[Params(64, 128, 256, 512)]
 		public int IntellisenseLaunchCount { get; set; }
 
 		[Params(true, false)]
