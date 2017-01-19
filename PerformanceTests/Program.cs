@@ -38,6 +38,8 @@ namespace PerformanceTests
 			{
 				CurrentContentType = ContentType.CSharp,
 				ClassCount = 2,
+				CommentedOut = false,
+				LargeFile = true
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
 			DiagnosticApplication.Run(test, test.BasicTypingPerf);

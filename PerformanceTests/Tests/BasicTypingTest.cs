@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using PerformanceTests.Props;
 using System;
 
 namespace PerformanceTests.Tests
@@ -8,47 +9,34 @@ namespace PerformanceTests.Tests
 		[Params(1, 10)]
 		public int ClassCount { get; set; }
 
-		[Params(0, 10)]
-		public int IntellisenseLaunchCount { get; set; }
+		[Params(true, false)]
+		public bool CommentedOut { get; set; }
+
+		[Params(true, false)]
+		public bool LargeFile { get; set; }
 
 		public override void SetupHost()
 		{
 			base.SetupHost();
 
-			Host.SetText(@"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp1
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-        }
-    }
-
-}
-");
-			Host.MoveCaret(249);
+			Host.SetText(Snippets.ConsoleApp + (LargeFile ? Snippets.ExtraCode : String.Empty));
+			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(Location.AfterClass));
 		}
 
 		[Benchmark, STAThread]
 		public void BasicTypingPerf()
 		{
-			// Test: Type code
+			// Tests performance of working within /* block comments */
+			Host.SendKeystrokes(CommentedOut ? "/*" : "  " );
+
+			// Tests basic typing scenario with special characters
 			for (int c = 0; c < ClassCount; c++)
 			{
-				Host.SendKeystrokes("class  SampleClass" + c);
-Host.SendKeystrokes(@"
+				Host.SendKeystrokes("class  SampleClass" + c); // Double space dismisses intellisense
+				Host.SendKeystrokes(@"
 {
 private
- int");
-				Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
-				Host.SendKeystrokes(@"  SampleMethod()
+ int  SampleMethod()
 {
 int  x = 5;
 int  y = ");
@@ -62,12 +50,7 @@ return  z ** 1234567890;
 ");
 			}
 
-			// Test: Launch intellisense
-			for (int i = 0; i < IntellisenseLaunchCount; i++)
-			{
-				Host.SendKey(System.Windows.Input.Key.Space, System.Windows.Input.ModifierKeys.Control);
-				Host.SendKey(System.Windows.Input.Key.Escape); // Dismiss intellisense
-			}
+			Host.SendKeystrokes(CommentedOut ? "*/" : "  ");
 		}
 	}
 }
