@@ -163,24 +163,16 @@ namespace VSEmbed.Roslyn
 	[ContentType("Roslyn Languages")]
 	[Order(Before = "Standard KeyProcessor")]
 	[Name("Roslyn KeyProcessor")]
-	sealed class RoslynKeyProcessorProvider : IChainedKeyProcessorProvider {
+	sealed class RoslynKeyProcessorProvider : IChainedKeyProcessorProvider
+	{
 		// I need to use the MEF container directly to import a private Roslyn interface.
 		readonly IComponentModel componentModel;
 
 		[ImportingConstructor]
-		public RoslynKeyProcessorProvider(SVsServiceProvider sp) {
+		public RoslynKeyProcessorProvider(SVsServiceProvider sp)
+		{
 			var mySP = (VsServiceProvider)sp;
 			componentModel = mySP.ComponentModel;
-
-			// This is necessary for icons in IntelliSense
-			// The initialization is re-entrant, which can
-			// make MEF try to create this class again and
-			// throw a re-entrancy exception from Lazy<T>.
-			// I therefore initialize this asynchronously.
-			Dispatcher.CurrentDispatcher.BeginInvoke(new Action(delegate {
-				var imageService = new VsImageService(sp);
-				imageService.InitializeLibrary();
-			}));
 		}
 
 

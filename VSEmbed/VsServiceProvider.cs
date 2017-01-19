@@ -60,15 +60,11 @@ namespace VSEmbed
 					// Used by Roslyn's VisualStudioWaitIndicator
 					{ typeof(SVsThreadedWaitDialogFactory).GUID, new BaseWaitDialogFactory() },
 
-					// Used by Dev14's VsImageLoader, which is needed for Roslyn IntelliSense
-					{ typeof(SVsAppId).GUID, new SimpleVsAppId() },
-
 					// Used by KeyBindingHelper.GetKeyBinding, which is used by VSLightBulbPresenterStyle.
 					{ typeof(SDTE).GUID, new StubDTE() },
 
 					// Used by VsTaskSchedulerService; see below
 					{ typeof(SVsShell).GUID, new StubVsShell() },
-
 				}
 			};
 

@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Composition;
 
 using MEFv1 = System.ComponentModel.Composition;
 using MEFv3 = Microsoft.VisualStudio.Composition;
+using Microsoft.VisualStudio.Imaging;
 
 namespace VSEmbed
 {
@@ -95,7 +96,16 @@ namespace VSEmbed
 
 			var containerBuilder = new VsMefContainerBuilder(MEFv3.ComposableCatalog.Create(Resolver.DefaultInstance))
 				.WithCatalog(types);
+
+			InitializeImageService();
+
 			return containerBuilder;
+		}
+
+		private static void InitializeImageService()
+		{
+			const string manifest = "Microsoft.VisualStudio.ImageCatalog.imagemanifest";
+			var library = ImageLibrary.Load(manifest, isDefault: true);
 		}
 
 		public VsMefContainerBuilder WithCatalog(IEnumerable<Type> types)

@@ -81,52 +81,6 @@ namespace VSEmbed.Services
 			return 0;
 		}
 	}
-	class AppDispatcherInvoker : IVsInvokerPrivate {
-		public int Invoke([In, MarshalAs(UnmanagedType.Interface)]IVsInvokablePrivate pInvokable) {
-			return Application.Current.Dispatcher.Invoke(new Func<int>(pInvokable.Invoke));
-		}
-	}
-#pragma warning restore 0436
-
-	class SimpleVsAppId : IVsAppId {
-		public int GetGuidProperty(int propid, out Guid guid) {
-			throw new NotImplementedException();
-		}
-
-		public int GetProperty(int propid, out object pvar) {
-			switch ((VSAPropID)propid) {
-				// These values are used by VsImageService.InitializeLibrary
-				case VSAPropID.LocalAppDataDir:		// This is used to cache images
-					pvar = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "VSEmbed");
-					return 0;
-				case VSAPropID.ConfigurationTimestampUtc:
-					// The cache will be deleted if its modification time is less than this value.
-					// Let it last for thirty days.
-					pvar = DateTime.UtcNow.AddDays(-30);
-					return 0;
-				default:
-					pvar = null;
-					return 0;
-			}
-		}
-
-		public int Initialize() {
-			return 0;
-		}
-
-		public int SetGuidProperty(int propid, ref Guid rguid) {
-			return 0;
-		}
-
-		public int SetProperty(int propid, object var) {
-			return 0;
-		}
-
-		public int SetSite(Microsoft.VisualStudio.OLE.Interop.IServiceProvider pSP) {
-			return 0;
-		}
-	}
-
 	class SystemUIHostLocale : IUIHostLocale2 {
 		public int GetDialogFont(UIDLGLOGFONT[] pLOGFONT) {
 			pLOGFONT[0].lfFaceName = SystemFonts.CaptionFontFamily.Source.Select(c => (ushort)c).ToArray();
@@ -153,36 +107,10 @@ namespace VSEmbed.Services
 			throw new NotImplementedException();
 		}
 	}
-
-#pragma warning disable 0436	// Tell the non-Roslyn compiler to ignore conflicts with inaccessible NoPIA types
-	class SimpleVsWindowManager : IVsWindowManager2 {
-#pragma warning restore 0436
-		[return: MarshalAs(UnmanagedType.IUnknown)]
-		public object GetResourceKeyReferenceType([In, MarshalAs(UnmanagedType.IUnknown)]object requestedResource) {
-			Type left = requestedResource as Type;
-			if (left == null) {
-				throw new ArgumentException();
-			}
-			if (left == typeof(ScrollBar) || left == typeof(ScrollViewer)) {
-				return Application.Current.MainWindow.GetType();
-			}
-			throw new ArgumentException();
-		}
-
-		public void _VtblGap1_3() { }
-	}
 }
 
 namespace Microsoft.Internal.VisualStudio.Shell.Interop
 {
-	[CompilerGenerated, Guid("D73DC67C-3E91-4073-9A5E-5D09AA74529B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), TypeIdentifier]
-	[ComImport]
-	public interface IVsWindowManager2 {
-		void _VtblGap1_3();
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		[return: MarshalAs(UnmanagedType.IUnknown)]
-		object GetResourceKeyReferenceType([MarshalAs(UnmanagedType.IUnknown)] [In] object requestedResource);
-	}
 	[CompilerGenerated, Guid("20705D94-A39B-4741-B5E1-041C5985EF61"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), TypeIdentifier]
 	[ComImport]
 	public interface IVsInvokerPrivate {
