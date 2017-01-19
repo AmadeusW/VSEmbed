@@ -332,6 +332,7 @@
   <ItemGroup>
     <Compile Include="Props\Location.cs" />
     <Compile Include="Props\Snippets.cs" />
+    <Compile Include="Tests\AutoformattingTest.cs" />
     <Compile Include="Tests\BraceCompletionTest.cs" />
     <Compile Include="Tests\CutCopyUndoPasteTest.cs" />
     <Compile Include="Tests\CompletionTest.cs" />

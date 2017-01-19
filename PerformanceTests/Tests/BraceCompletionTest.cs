@@ -27,7 +27,7 @@ namespace PerformanceTests.Tests
 		[Benchmark(OperationsPerInvoke = 1), STAThread]
 		public void InvokeBraceCompletion()
 		{
-			// TODO: Brace completion doesn't work!
+			// Brace completion works only for syntax nodes contained directly in affected braces.
 			//Host.SendKey(System.Windows.Input.Key.Enter);
 			Host.SendKey(System.Windows.Input.Key.X);
 		}

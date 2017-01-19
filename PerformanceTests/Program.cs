@@ -36,13 +36,15 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new BraceCompletionTest()
+			var test = new AutoformattingTest()
 			{
 				CurrentContentType = ContentType.CSharp,
-				Folded = true,
+				NeedToFormat = true,
+				NeedToIndent = true,
+				LineCount = 10
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticApplication.Run(test, test.InvokeBraceCompletion);
+			DiagnosticApplication.Run(test, test.AutoFormat);
 		}
 	}
 }
