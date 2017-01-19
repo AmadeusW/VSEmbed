@@ -19,7 +19,7 @@ namespace PerformanceTests.Tests
 		{
 			base.SetupHost();
 
-			Host.SetText(Snippets.ConsoleApp + (LargeFile ? Snippets.ExtraCode : String.Empty));
+			Host.SetText(Snippets.ConsoleApp + (LargeFile ? Snippets.ArrayMethods : String.Empty));
 			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(CompletionLocation));
 		}
 

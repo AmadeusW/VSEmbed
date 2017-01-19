@@ -43,7 +43,27 @@ namespace PerfTest
 			return 0;
 		}
 
-		public static string ExtraCode => @"
+		internal static int GetCaretPositionInArrayMethods(Location completionLocation)
+		{
+			switch (completionLocation)
+			{
+				case Location.OutsideNamespace:
+					return 0;
+				case Location.WithinClass:
+					return 127;
+				case Location.WithinMethod:
+					return 186;
+				case Location.AfterClass:
+					return 4352;
+			}
+			return 0;
+		}
+
+		public static string ArrayMethods => @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace PerfTest
 {
     class ExtraCode
@@ -248,6 +268,7 @@ namespace PerfTest
 				action(array[i]);
 			}
 		}
+
 	}
 }
 ";
