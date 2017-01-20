@@ -11,8 +11,8 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			UITest();
-			//Benchmark();
+			//UITest();
+			Benchmark();
 		}
 
 		/// <summary>
@@ -21,13 +21,15 @@ namespace PerformanceTests
 		private static void Benchmark()
 		{
 			var config = ManualConfig.Create(DefaultConfig.Instance);
-			config.Add(new Job("TestJob")
+			config.Add(new Job("20170119")
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
-			var summary1 = BenchmarkRunner.Run<BasicTypingTest>(config);
-			var summary2 = BenchmarkRunner.Run<CompletionTest>(config);
-			var summary3 = BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
+			BenchmarkRunner.Run<BasicTypingTest>(config);
+			BenchmarkRunner.Run<CompletionTest>(config);
+			BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
+			BenchmarkRunner.Run<AutoformattingBlockTest>(config);
+			BenchmarkRunner.Run<AutoformattingNewlineTest>(config);
 			Console.ReadLine();
 		}
 
