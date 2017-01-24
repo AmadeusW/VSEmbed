@@ -41,6 +41,7 @@ namespace PerformanceTests
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			//for (int i = 0; i < 10; i++)
 			_testMethod?.Invoke();
 			//_testClass.Cleanup(); // Used only for debugging
 		}

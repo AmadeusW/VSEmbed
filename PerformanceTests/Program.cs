@@ -10,8 +10,9 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			UITest();
-			//ExploratoryBenchmark();
+			//UITest();
+			ExploratoryBenchmark();
+			//FocusedBenchmark();
 		}
 
 		/// <summary>
@@ -24,11 +25,12 @@ namespace PerformanceTests
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
-			BenchmarkRunner.Run<ExploratoryTests.BasicTypingTest>(config);
+			/*BenchmarkRunner.Run<ExploratoryTests.BasicTypingTest>(config);
 			BenchmarkRunner.Run<ExploratoryTests.CompletionTest>(config);
 			BenchmarkRunner.Run<ExploratoryTests.CutCopyPasteUndoTest>(config);
 			BenchmarkRunner.Run<ExploratoryTests.AutoformattingBlockTest>(config);
-			BenchmarkRunner.Run<ExploratoryTests.AutoformattingNewlineTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.AutoformattingNewlineTest>(config);*/
+			BenchmarkRunner.Run<FocusedTests.TypingTest>(config);
 			Console.ReadLine();
 		}
 
@@ -40,9 +42,9 @@ namespace PerformanceTests
 			var config = ManualConfig.Create(DefaultConfig.Instance);
 			config.Add(new Job(DateTime.Now.ToString("yyyyMMdd") + " - focused")
 			{
-				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 4, InvocationCount = 4 }
+				Run = { LaunchCount = 2, TargetCount = 5, WarmupCount = 1, UnrollFactor = 5, InvocationCount = 5 }
 			});
-			BenchmarkRunner.Run<ExploratoryTests.CompletionTest>(config);
+			BenchmarkRunner.Run<FocusedTests.TypingTest>(config);
 			Console.ReadLine();
 		}
 
@@ -55,7 +57,7 @@ namespace PerformanceTests
 			{
 				CurrentContentType = ContentType.CSharp,
 				Comment = false,
-				Formatting = false
+				SemicolonFormatting = false
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
 			DiagnosticApplication.Run(test, test.Typing);
