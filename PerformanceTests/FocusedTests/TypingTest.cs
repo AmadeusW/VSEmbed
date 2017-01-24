@@ -15,7 +15,7 @@ namespace PerformanceTests.FocusedTests
 		[Params(ContentType.text, ContentType.CSharp)]
 		public ContentType CurrentContentType { get; set; }
 
-		public override void SetupHost()
+		protected override void SetupHost()
 		{
 			Host.SetContentType(CurrentContentType.ToString());
 

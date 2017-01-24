@@ -14,6 +14,7 @@ namespace PerformanceTests
 	public abstract class TestBase
 	{
 		protected VSEmbed.DemoApp.EditorWindow Host { get; private set; }
+		protected abstract void SetupHost();
 
 		static TestBase()
 		{
@@ -41,8 +42,6 @@ namespace PerformanceTests
 			Host.Show();
 			SetupHost();
 		}
-
-		public abstract void SetupHost();
 
 		[Cleanup]
 		public void Cleanup()
