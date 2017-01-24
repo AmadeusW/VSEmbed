@@ -41,7 +41,8 @@ namespace PerformanceTests
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			//for (int i = 0; i < 10; i++)
+			Console.WriteLine("Press Enter...");  Console.ReadLine(); Console.WriteLine("start"); // Used to start PerfView just before executing the test
+			//for (int i = 0; i < 10; i++) // Used to test multiple invocations of a focused tests
 			_testMethod?.Invoke();
 			//_testClass.Cleanup(); // Used only for debugging
 		}
