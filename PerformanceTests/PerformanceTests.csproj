@@ -335,6 +335,7 @@
     <Compile Include="ExploratoryTests\BasicTypingTest.cs" />
     <Compile Include="ExploratoryTests\CompletionTest.cs" />
     <Compile Include="ExploratoryTests\CutCopyUndoPasteTest.cs" />
+    <Compile Include="FocusedTests\TypingTest.cs" />
     <Compile Include="Props\Location.cs" />
     <Compile Include="Props\Snippets.cs" />
     <Compile Include="DiagnosticApplication.cs" />

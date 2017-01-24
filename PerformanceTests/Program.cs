@@ -51,14 +51,14 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new ExploratoryTests.BasicTypingTest()
+			var test = new FocusedTests.TypingTest()
 			{
 				CurrentContentType = ContentType.CSharp,
-				ClassCount = 2,
-				LargeFile = true
+				Comment = false,
+				Formatting = false
 			};
 			// DiagnosticRunner runs benchmark code in the UI context
-			DiagnosticApplication.Run(test, test.TypingBasic);
+			DiagnosticApplication.Run(test, test.Typing);
 		}
 	}
 }
