@@ -11,17 +11,17 @@ namespace PerformanceTests
 		[STAThread]
 		static void Main(string[] args)
 		{
-			UITest();
-			//Benchmark();
+			//UITest();
+			ExploratoryBenchmark();
 		}
 
 		/// <summary>
 		/// BenchmarkRunner runs the benchmark. Run it in Release configuration!
 		/// </summary>
-		private static void Benchmark()
+		private static void ExploratoryBenchmark()
 		{
 			var config = ManualConfig.Create(DefaultConfig.Instance);
-			config.Add(new Job("20170119")
+			config.Add(new Job(DateTime.Now.ToString("yyyyMMdd") + " - exploratory")
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
@@ -30,6 +30,20 @@ namespace PerformanceTests
 			BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
 			BenchmarkRunner.Run<AutoformattingBlockTest>(config);
 			BenchmarkRunner.Run<AutoformattingNewlineTest>(config);
+			Console.ReadLine();
+		}
+
+		/// <summary>
+		/// BenchmarkRunner runs the benchmark. Run it in Release configuration!
+		/// </summary>
+		private static void FocusedBenchmark()
+		{
+			var config = ManualConfig.Create(DefaultConfig.Instance);
+			config.Add(new Job(DateTime.Now.ToString("yyyyMMdd") + " - focused")
+			{
+				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 4, InvocationCount = 4 }
+			});
+			BenchmarkRunner.Run<CompletionTest>(config);
 			Console.ReadLine();
 		}
 
