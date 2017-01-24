@@ -65,6 +65,7 @@ namespace PerformanceTests
 		internal void AttachToHost(VSEmbed.DemoApp.EditorWindow host)
 		{
 			Host = host;
+			Host.Show();
 			SetupHost();
 		}
 	}
