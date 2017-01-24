@@ -9,6 +9,6 @@
         Title="EditorTestApp" Height="350" Width="525">
 	
 	<DockPanel LastChildFill="True">
-		<vscontrols:TextViewHost x:Name="mainTextViewHost" ContentType="CSharp"/>
+		<vscontrols:TextViewHost x:Name="mainTextViewHost" ContentType="text"/>
 	</DockPanel>
 </Window>
