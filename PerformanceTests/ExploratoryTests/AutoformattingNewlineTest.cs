@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	public class AutoformattingNewlineTest : TestBase
 	{

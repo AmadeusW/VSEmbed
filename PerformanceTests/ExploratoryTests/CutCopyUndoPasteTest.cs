@@ -2,7 +2,7 @@
 using PerformanceTests.Props;
 using System;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	public class CutCopyPasteUndoTest : TestBase
 	{

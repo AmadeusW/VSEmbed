@@ -5,7 +5,6 @@ using System.Windows;
 using VSEmbed;
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
-using PerformanceTests.Tests;
 
 namespace PerformanceTests
 {

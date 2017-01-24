@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	/// <summary>
 	/// Finds how much time it takes to autoformat a concatenation of elements, e.g.

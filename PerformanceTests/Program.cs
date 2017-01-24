@@ -1,5 +1,4 @@
 ﻿using System;
-using PerformanceTests.Tests;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
@@ -25,11 +24,11 @@ namespace PerformanceTests
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 1, InvocationCount = 1 }
 			});
-			BenchmarkRunner.Run<BasicTypingTest>(config);
-			BenchmarkRunner.Run<CompletionTest>(config);
-			BenchmarkRunner.Run<CutCopyPasteUndoTest>(config);
-			BenchmarkRunner.Run<AutoformattingBlockTest>(config);
-			BenchmarkRunner.Run<AutoformattingNewlineTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.BasicTypingTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.CompletionTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.CutCopyPasteUndoTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.AutoformattingBlockTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.AutoformattingNewlineTest>(config);
 			Console.ReadLine();
 		}
 
@@ -43,7 +42,7 @@ namespace PerformanceTests
 			{
 				Run = { LaunchCount = 3, TargetCount = 1, WarmupCount = 1, UnrollFactor = 4, InvocationCount = 4 }
 			});
-			BenchmarkRunner.Run<CompletionTest>(config);
+			BenchmarkRunner.Run<ExploratoryTests.CompletionTest>(config);
 			Console.ReadLine();
 		}
 
@@ -52,7 +51,7 @@ namespace PerformanceTests
 		/// </summary>
 		private static void UITest()
 		{
-			var test = new BasicTypingTest()
+			var test = new ExploratoryTests.BasicTypingTest()
 			{
 				CurrentContentType = ContentType.CSharp,
 				ClassCount = 2,
