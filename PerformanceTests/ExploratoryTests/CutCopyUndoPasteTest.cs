@@ -12,9 +12,12 @@ namespace PerformanceTests.ExploratoryTests
 		[Params(44, 94, 136, 200)]
 		public int LineCount { get; set; }
 
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
 		public override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			Host.SetText(Snippets.ArrayMethods);
 			Host.MoveCaret(Snippets.GetCaretPositionInArrayMethods(Location.WithinClass));

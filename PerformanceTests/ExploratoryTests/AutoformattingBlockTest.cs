@@ -19,9 +19,12 @@ namespace PerformanceTests.ExploratoryTests
 		[Params(128, 256, 512, 1024, 2048)]
 		public int LineCount { get; set; }
 
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
 		public override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			var baseText = Snippets.ConsoleApp;
 

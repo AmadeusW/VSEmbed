@@ -15,9 +15,12 @@ namespace PerformanceTests.ExploratoryTests
 		[Params(Location.OutsideNamespace, Location.WithinClass, Location.WithinMethod)]
 		public Location CompletionLocation { get; set; }
 
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
 		public override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			Host.SetText(Snippets.ConsoleApp + (LargeFile ? Snippets.ArrayMethods : String.Empty));
 			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(CompletionLocation));

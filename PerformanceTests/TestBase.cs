@@ -14,9 +14,6 @@ namespace PerformanceTests
 	public abstract class TestBase
 	{
 		protected VSEmbed.DemoApp.EditorWindow Host { get; private set; }
-		
-		[Params(ContentType.text, ContentType.CSharp)]
-		public ContentType CurrentContentType { get; set; }
 
 		static TestBase()
 		{
@@ -45,10 +42,7 @@ namespace PerformanceTests
 			SetupHost();
 		}
 
-		public virtual void SetupHost()
-		{
-			Host.SetContentType(CurrentContentType.ToString());
-		}
+		public abstract void SetupHost();
 
 		[Cleanup]
 		public void Cleanup()
