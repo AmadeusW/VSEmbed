@@ -38,18 +38,27 @@ namespace PerformanceTests
 		}	
 
 		[Setup]
-		public void Setup()
+		public virtual void Setup()
 		{
 			Host = new VSEmbed.DemoApp.EditorWindow();
 			Host.Show();
+			SetupHost();
+		}
+
+		public virtual void SetupHost()
+		{
 			Host.SetContentType(CurrentContentType.ToString());
 		}
 
 		[Cleanup]
 		public void Cleanup()
 		{
+			Host.ClearText();
 			Host.Close();
 			Host = null;
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		/// <summary>
@@ -62,7 +71,7 @@ namespace PerformanceTests
 		internal void AttachToHost(VSEmbed.DemoApp.EditorWindow host)
 		{
 			Host = host;
-			Host.SetContentType(CurrentContentType.ToString());
+			SetupHost();
 		}
 	}
 }

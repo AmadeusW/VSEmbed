@@ -330,6 +330,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Props\Location.cs" />
+    <Compile Include="Props\Snippets.cs" />
+    <Compile Include="Tests\AutoformattingNewlineTest.cs" />
+    <Compile Include="Tests\AutoformattingBlockTest.cs" />
+    <Compile Include="Tests\CutCopyUndoPasteTest.cs" />
+    <Compile Include="Tests\CompletionTest.cs" />
     <Compile Include="Tests\BasicTypingTest.cs" />
     <Compile Include="DiagnosticApplication.cs" />
     <Compile Include="Program.cs" />

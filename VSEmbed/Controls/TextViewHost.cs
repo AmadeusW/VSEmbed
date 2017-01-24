@@ -13,6 +13,7 @@ namespace VSEmbed.Controls
 	public class TextViewHost : ContentPresenter {
 		///<summary>Gets the <see cref="IWpfTextView"/> displayed by the control.</summary>
 		public IWpfTextView TextView { get; private set; }
+
 		///<summary>Creates a <see cref="TextViewHost"/>.  <see cref="VsMefContainerBuilder"/> must be set up before creating this.</summary>
 		public TextViewHost() {
 			if (VsServiceProvider.Instance.ComponentModel == null) {
@@ -31,6 +32,13 @@ namespace VSEmbed.Controls
 			TextView.TextBuffer.Changed += (s, e) => Text = TextView.TextSnapshot.GetText();
 		}
 
+		///<summary>Gets or sets the ContentType of the embedded <see cref="ITextBuffer"/>.</summary>
+		public string ContentType
+		{
+			get { return (string)GetValue(ContentTypeProperty); }
+			set { SetValue(ContentTypeProperty, value); }
+		}
+
 		private static Lazy<IReadOnlyList<string>> availableContentTypes = new Lazy<IReadOnlyList<string>>(() =>
 			VsServiceProvider.Instance.ComponentModel
 				.GetService<IContentTypeRegistryService>()
@@ -41,13 +49,6 @@ namespace VSEmbed.Controls
 		);
 		///<summary>Gets all content types registered by the editor.</summary>
 		public static IReadOnlyList<string> AvailableContentTypes { get { return availableContentTypes.Value; } }
-
-
-		///<summary>Gets or sets the ContentType of the embedded <see cref="ITextBuffer"/>.</summary>
-		public string ContentType {
-			get { return (string)GetValue(ContentTypeProperty); }
-			set { SetValue(ContentTypeProperty, value); }
-		}
 
 		///<summary>Identifies the <see cref="ContentType"/> dependency property.</summary>
 		public static readonly DependencyProperty ContentTypeProperty =
@@ -77,6 +78,27 @@ namespace VSEmbed.Controls
 			var value = e.NewValue as string;
 			if (value != instance.Text)
 				instance.TextView.TextBuffer.Replace(new Span(0, instance.TextView.TextSnapshot.Length), value);
+		}
+
+		public void MoveCaret(int position)
+		{
+			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextBuffer.CurrentSnapshot, position));
+		}
+
+		public void MoveCaretToEnd()
+		{
+			TextView.Caret.MoveTo(new SnapshotPoint(TextView.TextBuffer.CurrentSnapshot, TextView.TextBuffer.CurrentSnapshot.Length));
+		}
+
+		public void Clear()
+		{
+			if (TextView.TextBuffer.CurrentSnapshot.Length > 0)
+				TextView.TextBuffer.Delete(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length));
+		}
+
+		public void SetText(string text)
+		{
+			TextView.TextBuffer.Replace(new Span(0, TextView.TextBuffer.CurrentSnapshot.Length), text);
 		}
 	}
 }

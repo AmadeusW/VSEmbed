@@ -38,12 +38,14 @@ namespace PerformanceTests
 			this._testMethod = testMethod;
 			_mainWindow = new VSEmbed.DemoApp.EditorWindow();
 			_testClass.AttachToHost(_mainWindow);
+			_testClass.SetupHost();
 		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			_mainWindow.Show();
 			_testMethod?.Invoke();
+			//_testClass.Cleanup(); // Used only for debugging
 		}
 	}
 }
