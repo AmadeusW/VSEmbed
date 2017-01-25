@@ -2,7 +2,7 @@
 using PerformanceTests.Props;
 using System;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	public class BasicTypingTest : TestBase
 	{
@@ -12,9 +12,12 @@ namespace PerformanceTests.Tests
 		[Params(true, false)]
 		public bool LargeFile { get; set; }
 
-		public override void SetupHost()
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
+		protected override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			Host.SetText(Snippets.ConsoleApp + (LargeFile ? Snippets.ArrayMethods : String.Empty));
 			Host.MoveCaret(Snippets.GetCaretPositionInConsoleApp(Location.AfterClass));

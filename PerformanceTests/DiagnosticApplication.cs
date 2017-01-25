@@ -5,7 +5,6 @@ using System.Windows;
 using VSEmbed;
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
-using PerformanceTests.Tests;
 
 namespace PerformanceTests
 {
@@ -38,12 +37,12 @@ namespace PerformanceTests
 			this._testMethod = testMethod;
 			_mainWindow = new VSEmbed.DemoApp.EditorWindow();
 			_testClass.AttachToHost(_mainWindow);
-			_testClass.SetupHost();
 		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			_mainWindow.Show();
+			//Console.WriteLine("Press Enter...");  Console.ReadLine(); Console.WriteLine("start"); // Used to start PerfView just before executing the test
+			//for (int i = 0; i < 10; i++) // Used to test multiple invocations of a focused tests
 			_testMethod?.Invoke();
 			//_testClass.Cleanup(); // Used only for debugging
 		}

@@ -2,7 +2,7 @@
 using PerformanceTests.Props;
 using System;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	public class CutCopyPasteUndoTest : TestBase
 	{
@@ -12,9 +12,12 @@ namespace PerformanceTests.Tests
 		[Params(44, 94, 136, 200)]
 		public int LineCount { get; set; }
 
-		public override void SetupHost()
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
+		protected override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			Host.SetText(Snippets.ArrayMethods);
 			Host.MoveCaret(Snippets.GetCaretPositionInArrayMethods(Location.WithinClass));

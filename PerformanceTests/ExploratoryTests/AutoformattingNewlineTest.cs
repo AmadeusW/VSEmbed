@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PerformanceTests.Tests
+namespace PerformanceTests.ExploratoryTests
 {
 	public class AutoformattingNewlineTest : TestBase
 	{
@@ -23,9 +23,12 @@ namespace PerformanceTests.Tests
 		[Params(128, 256, 512)]
 		public int LineCount { get; set; }
 
-		public override void SetupHost()
+		[Params(ContentType.text, ContentType.CSharp)]
+		public ContentType CurrentContentType { get; set; }
+
+		protected override void SetupHost()
 		{
-			base.SetupHost();
+			Host.SetContentType(CurrentContentType.ToString());
 
 			var baseText = Snippets.ConsoleApp;
 			// Ten repetitions of "a", "b", "c"
