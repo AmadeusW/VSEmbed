@@ -64,6 +64,9 @@ namespace VSEmbed
 				"Microsoft.CodeAnalysis.Workspaces.Desktop",
 				"Microsoft.CodeAnalysis.Workspaces",
 
+				"Microsoft.VisualStudio.Language.CallHierarchy",
+				"Microsoft.VisualStudio.Language.NavigateTo.Interfaces",
+
 				"Microsoft.VisualStudio.Platform.VSEditor",
 				"Microsoft.VisualStudio.Text.Logic",
 				"Microsoft.VisualStudio.Text.UI",
